@@ -37,7 +37,7 @@ const checkVersions = () => {
   
   // func main
   console.log(`${logName}: starting ...`);
-  checkVersion(CONSTANTS.WorkingEpSdkDir);
+  checkVersion(CONSTANTS.WorkingEpAsyncApiDir);
   console.log(`${logName}: success.`);
 }
 
@@ -51,7 +51,7 @@ const publishPackages = () => {
     if(s.exec('npm publish').code !== 0) process.exit(1);
   }
 
-  publish(CONSTANTS.WorkingEpSdkDir);
+  publish(CONSTANTS.WorkingEpAsyncApiDir);
 
   console.log(`${logName}: success.`);
 
