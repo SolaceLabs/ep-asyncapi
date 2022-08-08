@@ -20,9 +20,9 @@ on:
 env:
   # DEBUG_FLAG: ${{ true }}
   DEBUG_FLAG: ${{ false }}
-  EP_SDK_DIR: "ep-sdk"
-  EP_SDK_TEST_LOGS_DIR: "ep-sdk/test/logs"
-  EP_SDK_TEST_LOGS_OUTPUT_NAME: "ep-sdk-test-logs"
+  EP_ASYNC_API_DIR: "ep-asyncapi"
+  EP_ASYNC_API_TEST_LOGS_DIR: "ep-asyncapi/test/logs"
+  EP_ASYNC_API_TEST_LOGS_OUTPUT_NAME: "ep-asyncapi-test-logs"
 jobs:
   test:
     runs-on: ubuntu-18.04
@@ -66,11 +66,10 @@ jobs:
           echo "bash --version: "; bash --version
           echo "node --version: "; node --version
           echo "npm --version: "; npm --version
-          echo "docker --version"; docker --version
 
       - name: "npm install"
         run: |
-          cd "${EP_SDK_DIR}"
+          cd "${EP_ASYNC_API_DIR}"
           npm install
 
       # - name: "server:lint"
@@ -80,21 +79,20 @@ jobs:
       #
       - name: "build"
         run: |
-          cd "${EP_SDK_DIR}"
+          cd "${EP_ASYNC_API_DIR}"
           npm run build
 
       - name: "test"
         run: |
-          cd "${EP_SDK_DIR}"
-          export EP_SDK_TEST_SOLACE_CLOUD_TOKEN="${{ secrets.EP_SDK_TEST_SOLACE_CLOUD_TOKEN }}"
+          cd "${EP_ASYNC_API_DIR}"
           test/run.sh
 
       - name: Archive Importer Cli Test Logs
         if: ${{ (failure() && !cancelled()) || (always() && (github.event_name=='workflow_dispatch' || env.DEBUG_FLAG=='true') ) }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.EP_SDK_TEST_LOGS_OUTPUT_NAME }}
-          path: ${{ github.workspace }}/${{ env.EP_SDK_TEST_LOGS_DIR }}
+          name: ${{ env.EP_ASYNC_API_TEST_LOGS_OUTPUT_NAME }}
+          path: ${{ github.workspace }}/${{ env.EP_ASYNC_API_TEST_LOGS_DIR }}
           if-no-files-found: error
 
 ###
