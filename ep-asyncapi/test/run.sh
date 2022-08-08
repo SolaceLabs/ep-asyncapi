@@ -28,7 +28,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
 filePattern="$LOG_DIR"
 tsErrors=$(grep -n -r -e "TSError" $filePattern )
-epSdkErrors=$(grep -n -r -e "EpSdkError" $filePattern )
+epAsyncApiErrors=$(grep -n -r -e "EpAsyncApiError" $filePattern )
 errors=$(grep -n -r -e " ERROR " $filePattern )
 test_failing=$(grep -n -r -e "failing" $filePattern )
 if [ ! -z "$tsErrors" ]; then
@@ -40,14 +40,14 @@ if [ ! -z "$tsErrors" ]; then
 else
   echo "   no TSError found"
 fi
-if [ ! -z "$epSdkErrors" ]; then
+if [ ! -z "$epAsyncApiErrors" ]; then
   FAILED=1
-  echo "   found ${#epSdkErrors[@]} EpSdkError(s)"
+  echo "   found ${#epAsyncApiErrors[@]} EpAsyncApiError(s)"
   while IFS= read line; do
     echo $line >> "$LOG_DIR/$scriptName.ERROR.out"
-  done < <(printf '%s\n' "$epSdkErrors")
+  done < <(printf '%s\n' "$epAsyncApiErrors")
 else
-  echo "   no EpSdkError found"
+  echo "   no EpAsyncApiError found"
 fi
 if [ ! -z "$errors" ]; then
   FAILED=1

@@ -1,29 +1,43 @@
-import { EEpSdkLogLevel } from "../../src/utils/EpSdkLogger";
+import fs from 'fs';
+import path from 'path';
 
 enum EEnvVars {
-  EP_SDK_TEST_SOLACE_CLOUD_TOKEN = 'EP_SDK_TEST_SOLACE_CLOUD_TOKEN',
-  EP_SDK_TEST_EP_API_BASE_URL = "EP_SDK_TEST_EP_API_BASE_URL",
-  EP_SDK_TEST_LOG_LEVEL = "EP_SDK_TEST_LOG_LEVEL"
+  EP_ASYNC_API_TEST_DATA_ROOT_DIR = "EP_ASYNC_API_TEST_DATA_ROOT_DIR",
 };
 
 export type TTestConfig = {
-  epBaseUrl: string;
-  logLevel: EEpSdkLogLevel;
+  dataRootDir: string;
 };
 
 class TestConfig {
 
-  private appId: string = "ep-sdk-test";
-  private solaceCloudToken: string;
+  private appId: string = "ep-asyncapi-test";
   private testConfig: TTestConfig;
 
-  private DEFAULT_EP_SDK_TEST_EP_API_BASE_URL = "https://api.solace.cloud";
+  private DEFAULT_EP_ASYNC_API_TEST_DATA_ROOT_DIR = "data";
+
+  private validateFilePathWithReadPermission = (filePath: string): string | undefined => {
+    try {
+      const absoluteFilePath = path.resolve(filePath);
+      // console.log(`validateFilePathWithReadPermission: absoluteFilePath=${absoluteFilePath}`);
+      fs.accessSync(absoluteFilePath, fs.constants.R_OK);
+      return absoluteFilePath;
+    } catch (e) {
+      // console.log(`validateFilePathWithReadPermission: filePath=${filePath}`);
+      // console.log(`e=${e}`);
+      return undefined;
+    }
+  }
 
   private getMandatoryEnvVarValueAsString = (envVarName: string): string => {
     const value: string | undefined = process.env[envVarName];
     if (!value) throw new Error(`mandatory env var missing: ${envVarName}`);    
     return value;
   };
+
+  private getOptionalEnvVarValueAsString = (envVarName: string): string | undefined => {
+    return process.env[envVarName];
+  }
 
   private getOptionalEnvVarValueAsUrlWithDefault = (envVarName: string, defaultValue: string): string => {
     const value: string | undefined = process.env[envVarName];
@@ -40,23 +54,24 @@ class TestConfig {
     return valueAsNumber;
   };
 
+  private getOptionalEnvVarValueAsPathWithReadPermissions = (envVarName: string, defaultValue: string): string | undefined => {
+    let value = this.getOptionalEnvVarValueAsString(envVarName);
+    if(!value) value = defaultValue;
+    return this.validateFilePathWithReadPermission(value);
+  }
 
-  public initialize = (): void => {
-    // handle solace cloud token separately
-    this.solaceCloudToken = this.getMandatoryEnvVarValueAsString(EEnvVars.EP_SDK_TEST_SOLACE_CLOUD_TOKEN);
 
+  public initialize = ({ scriptDir }:{
+    scriptDir: string;
+  }): void => {
     this.testConfig = {
-      epBaseUrl: this.getOptionalEnvVarValueAsUrlWithDefault(EEnvVars.EP_SDK_TEST_EP_API_BASE_URL, this.DEFAULT_EP_SDK_TEST_EP_API_BASE_URL),
-      logLevel: this.getMandatoryEnvVarValueAsNumber(EEnvVars.EP_SDK_TEST_LOG_LEVEL)
+      dataRootDir: this.getOptionalEnvVarValueAsUrlWithDefault(EEnvVars.EP_ASYNC_API_TEST_DATA_ROOT_DIR, `${scriptDir}/${this.DEFAULT_EP_ASYNC_API_TEST_DATA_ROOT_DIR}`),
     };
 
   }
 
   public getAppId = (): string => { 
     return this.appId; 
-  }
-  public getSolaceCloudToken = (): string => {
-    return this.solaceCloudToken;
   }
   public getConfig = (): TTestConfig => {
     return this.testConfig;

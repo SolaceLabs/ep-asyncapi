@@ -67,8 +67,8 @@ export class EpAsyncApiDocumentService {
 
   public createFromFile = async({ filePath, overrideEpApplicationDomainName, prefixEpApplicationDomainName }:{
     filePath: string;
-    overrideEpApplicationDomainName: string | undefined;
-    prefixEpApplicationDomainName: string | undefined;
+    overrideEpApplicationDomainName?: string;
+    prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     const apiSpecString: string = fs.readFileSync(filePath).toString();
     const asyncApiDocument: AsyncAPIDocument = await this.parse({ apiSpec: apiSpecString });
@@ -78,8 +78,8 @@ export class EpAsyncApiDocumentService {
 
   public createFromAny = async({ anySpec, overrideEpApplicationDomainName, prefixEpApplicationDomainName }:{
     anySpec: any;
-    overrideEpApplicationDomainName: string | undefined;
-    prefixEpApplicationDomainName: string | undefined;
+    overrideEpApplicationDomainName?: string;
+    prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     const asyncApiDocument: AsyncAPIDocument = await this.parse(anySpec);
     const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, prefixEpApplicationDomainName);
