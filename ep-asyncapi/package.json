@@ -1,6 +1,6 @@
 {
   "name": "@solace-iot-team/ep-asyncapi",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-alpha",
   "description": "Solace Event Portal AsyncAPI",
   "type": "commonjs",
   "main": "dist/index.js",

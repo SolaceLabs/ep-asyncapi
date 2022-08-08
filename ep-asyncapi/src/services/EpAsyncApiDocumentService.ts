@@ -1,53 +1,33 @@
 import fs from 'fs';
-// import _ from 'lodash';
 
 import { parse, AsyncAPIDocument } from '@asyncapi/parser';
 import { EpAsyncApiDocument } from '../documents/EpAsyncApiDocument';
-
-// export enum TCliActionType {
-//   CREATE = "CREATE",
-//   UPDATE = "UPDATE",
-//   REMOVE = "REMOVE"
-// }
-// export interface ICliImportAction {
-//   type: TCliActionType;
-//   details: any;
-// }
-// export type TCliImportActionList = Array<ICliImportAction>;
+import EpAsyncApiSemVerUtils from '../utils/EpAsyncApiSemVerUtils';
+import { EpAsyncApiBestPracticesError } from '../utils/EpAsyncApiErrors';
 
 export class EpAsyncApiDocumentService {
-  // private appConfig: TCliAppConfig;
-  // private asyncApiDocument: AsyncAPIDocument;
-  // private asyncApiDocumentJson: any;
-  // private applicationDomainName: string;
 
+  public validate_BestPractices({ epAsyncApiDocument }:{
+    epAsyncApiDocument: EpAsyncApiDocument
+  }): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiDocumentService.name}.${funcName}()`;
 
-  // public validate(): void {
-  //   this.validate_BestPractices();
-  //   this.validate_EP();
-  // }
-
-  // private validate_BestPractices(): void {
-  //   const funcName = 'validate_BestPractices';
-  //   const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
-
-  //   // version must be in SemVer format
-  //   const versionStr: string = this.getVersion();
-  //   if(!EpAsyncApiSemVerUtils.isSemVerFormat({ versionString: versionStr })) {
-  //     throw new EpAsyncApiBestPracticesError(logName, this.constructor.name, undefined, {
-  //       asyncApiSpecTitle: this.getTitle(),
-  //       issue: "Please use semantic versioning format for API version.",
-  //       value: {
-  //         versionString: versionStr
-  //       }
-  //     });
-  //   }
-  //   // TODO: further validations
-  //   // check that all channels have a message - must not be inline
-  //   // validate channel param schemas - must be unique
-  // }
-
-  // constructor(asyncApiDocument: AsyncAPIDocument, overrideEpApplicationDomainName: string | undefined, prefixEpApplicationDomainName: string | undefined) {
+    // version must be in SemVer format
+    const versionStr: string = epAsyncApiDocument.getVersion();
+    if(!EpAsyncApiSemVerUtils.isSemVerFormat({ versionString: versionStr })) {
+      throw new EpAsyncApiBestPracticesError(logName, this.constructor.name, undefined, {
+        asyncApiSpecTitle: epAsyncApiDocument.getTitle(),
+        issue: "Please use semantic versioning format for API version.",
+        value: {
+          versionString: versionStr
+        }
+      });
+    }
+    // TODO: further validations
+    // check that all channels have a message - must not be inline
+    // validate channel param schemas - must be unique
+  }
 
   private parse = async({ apiSpec}:{
     apiSpec: any;
