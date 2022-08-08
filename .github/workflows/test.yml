@@ -5,11 +5,8 @@
 
 name: test
 on:
-  # for testing
-  workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
+  # # for testing
+  # workflow_dispatch:
   # production
   schedule:
   # #   # - cron: '0 4 * * MON'
