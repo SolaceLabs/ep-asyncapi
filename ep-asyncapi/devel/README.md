@@ -3,8 +3,10 @@
 
 ## Build & Link
 ```bash
+npm install
+npm run build
+
 # link this to global
-npm build
 npm link
 
 # in using project:
