@@ -15,10 +15,10 @@ jobs:
   docs_test:
     runs-on: ubuntu-20.04
     strategy:
+      max-parallel: 1
       matrix:
-        max-parallel: 1
         python-version: [ '3.8' ]
-        node: [ '16' ]        
+        node: [ '16' ]
     steps:
       - name: Check Auth
         if: github.event_name == 'workflow_dispatch' && github.actor != 'ricardojosegomezulmke'
