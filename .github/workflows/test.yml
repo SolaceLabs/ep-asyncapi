@@ -3,7 +3,7 @@
 # Copyright (c) 2022, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-name: integration-test
+name: test
 on:
   # for testing
   workflow_dispatch:
@@ -24,7 +24,7 @@ env:
   EP_SDK_TEST_LOGS_DIR: "ep-sdk/test/logs"
   EP_SDK_TEST_LOGS_OUTPUT_NAME: "ep-sdk-test-logs"
 jobs:
-  integration_test:
+  test:
     runs-on: ubuntu-18.04
     strategy:
       max-parallel: 1
