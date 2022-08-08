@@ -25,7 +25,8 @@ env:
   EP_ASYNC_API_TEST_LOGS_OUTPUT_NAME: "ep-asyncapi-test-logs"
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    # runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     strategy:
       max-parallel: 1
       matrix:
