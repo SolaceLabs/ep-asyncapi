@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": ["es2021", "dom"],
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": false,
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "resolveJsonModule": true,
+    "outDir": "./typedoc-dist",
+    "typeRoots": ["./node_modules/@types"],
+    "composite": true
+  },
+  "include": ["src/**/*.ts"]
+}

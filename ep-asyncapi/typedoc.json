@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "resolve",
+  "entryPoints": [
+    "./src/documents/*.ts",
+    "./src/services/*.ts",
+    "./src/utils/EpAsyncApiErrors.ts"
+  ],
+  "out": "../docs/source/_generated/ep-asyncapi-tsdoc-content/tsdocs",
+  "includeVersion": true,
+  "hideGenerator": true,
+  "categorizeByGroup": true,
+  "excludePrivate": false,
+  "excludeExternals": false,
+  "excludeProtected": false,
+  "name": "EP AsyncAPI",
+  "logLevel": "Verbose",
+  "treatWarningsAsErrors": true,
+  "sort": ["kind", "instance-first", "alphabetical"],
+  "disableSources": false,
+  "tsconfig": "./typedoc.tsconfig.json",
+  "includes": "./examples"
+}
