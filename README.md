@@ -11,4 +11,4 @@
 [Documentation](https://solace-iot-team.github.io/ep-asyncapi/)
 
 
-> :warning: UNDER CONSTRUCTION
+Wrapper for the [AsyncAPI JavaScript Parser](https://github.com/asyncapi/parser-js) with convenience and validation methods for use with [Solace Event Portal](https://solace.com/products/portal/).
