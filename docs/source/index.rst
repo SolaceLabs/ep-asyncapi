@@ -17,7 +17,7 @@ Repos & Links
 
 
 .. _Solace Event Portal AsyncAPI:
-  https://github.com/solace-iot-team/ep-asyncapi/tree/main/ep-asyncapi
+  https://github.com/SolaceLabs/ep-asyncapi/tree/main/ep-asyncapi
 
 .. _Release Notes:
-  https://github.com/solace-iot-team/ep-asyncapi/blob/main/ReleaseNotes.md
+  https://github.com/SolaceLabs/ep-asyncapi/blob/main/ReleaseNotes.md
