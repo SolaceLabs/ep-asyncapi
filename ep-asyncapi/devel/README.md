@@ -1,23 +1,11 @@
 # Development ep-asyncapi
 
 
-## Build & Link
+## Build
 ```bash
 npm install
 npm run build
-
-# link this to global
-npm link
-
-# in using project:
-npm link @solace-iot-team/ep-asyncapi
-npm list # update package.json with new version number if needed
-# unlink again
-npm unlink --no-save @solace-iot-team/ep-asyncapi
-# NOTE: now install the released package
-npm install
 ```
-
 
 ## Run Tests
 
@@ -31,12 +19,34 @@ npm test
 source ./test/source.env.sh
 # run test
 # for example:
-npx mocha --config test/.mocharc.yml test/specs/misc/pino.spec.ts
-# pretty print server output:
-npx mocha --config test/.mocharc.yml test/specs/misc/pino.spec.ts | npx pino-pretty
+npx mocha --config test/.mocharc.yml test/specs/test-pass/acme-retail.spec.ts
 # unset the env
 unset_source_env
 ````
+
+
+## Link
+```bash
+npm run build
+npm link
+```
+
+### Consuming Link
+```bash
+cd {consuming project}
+npm link @solace-labs/ep-asyncapi
+npm list
+```
+
+#### Unlink Consuming Link
+```bash
+cd {consuming project}
+npm unlink --no-save @solace-labs/ep-asyncapi
+# NOTE: now install the released package
+npm install
+npm list
+```
+
 
 
 ---
