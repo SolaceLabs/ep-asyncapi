@@ -1,6 +1,14 @@
 # Release Notes
 
-Solace Event Portal AsyncAPI
+Solace Event Portal AsyncAPI.
+
+## Version 0.3.0-alpha
+
+Inital release @solace-labs.
+
+**Fixes:**
+- **EpAsyncApiDocument**
+  - `getTitleAsFilePath()`, `getTitleAsFileName()`: return spec title with special chars replaced by '-'
 
 ## Version 0.2.0-alpha
 
