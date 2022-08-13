@@ -1,14 +1,14 @@
 {
-  "name": "@solace-iot-team/ep-asyncapi",
+  "name": "@solace-labs/ep-asyncapi",
   "version": "0.2.0-alpha",
   "description": "Solace Event Portal AsyncAPI",
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "homepage": "https://github.com/solace-iot-team/ep-asyncapi",
+  "homepage": "https://github.com/solace-labs/ep-asyncapi",
   "repository": {
     "type": "git",
-    "url": "https://github.com/solace-iot-team/ep-asyncapi.git"
+    "url": "https://github.com/solace-labs/ep-asyncapi.git"
   },
   "keywords": [
     "api management",
@@ -25,7 +25,7 @@
   ],
   "license": "APACHE-2.0",
   "bugs": {
-    "url": "https://github.com/solace-iot-team/ep-asyncapi/issues"
+    "url": "https://github.com/solace-labs/ep-asyncapi/issues"
   },
   "scripts": {
     "compile:examples": "tsc --project examples/tsconfig.json",
