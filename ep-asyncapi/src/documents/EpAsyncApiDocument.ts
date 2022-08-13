@@ -94,11 +94,11 @@ export class EpAsyncApiDocument {
   public getApplicationDomainName(): string { return this.applicationDomainName; }
 
   public getTitleAsFilePath(): string {
-    return this.getTitle();
+    return this.getTitle().replaceAll(/[^0-9a-zA-Z]+/g, '-');
   }
 
   public getTitleAsFileName(ext: string): string {
-    return `${this.getTitle()}.${ext}`;
+    return `${this.getTitleAsFilePath()}.${ext}`;
   }
 
   public getAsSanitizedJson(): any {

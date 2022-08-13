@@ -26,7 +26,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 ##############################################################################################################################
 # Check for errors
 
-filePattern="$LOG_DIR"
+filePattern="$logFile"
 tsErrors=$(grep -n -r -e "TSError" $filePattern )
 epAsyncApiErrors=$(grep -n -r -e "EpAsyncApiError" $filePattern )
 errors=$(grep -n -r -e " ERROR " $filePattern )
