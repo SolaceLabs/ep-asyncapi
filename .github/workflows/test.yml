@@ -5,8 +5,8 @@
 
 name: test
 on:
-  # # for testing
-  # workflow_dispatch:
+  # for testing
+  workflow_dispatch:
   # production
   schedule:
   # #   # - cron: '0 4 * * MON'
@@ -84,6 +84,20 @@ jobs:
           cd "${EP_ASYNC_API_DIR}"
           test/run.sh
 
+      - name: cat lcov info
+        if: env.DEBUG_FLAG == 'true'
+        run: |
+          cat "${{ github.workspace }}/${{ env.EP_ASYNC_API_TEST_LOGS_DIR }}/coverage/lcov.info"
+
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.node }}
+          parallel: true
+          path-to-lcov: ${{ github.workspace }}/${{ env.EP_ASYNC_API_TEST_LOGS_DIR }}/coverage/lcov.info
+          base-path: ${{ env.EP_ASYNC_API_DIR }}
+
       - name: Archive Importer Cli Test Logs
         if: ${{ (failure() && !cancelled()) || (always() && (github.event_name=='workflow_dispatch' || env.DEBUG_FLAG=='true') ) }}
         uses: actions/upload-artifact@v2
@@ -91,6 +105,16 @@ jobs:
           name: ${{ env.EP_ASYNC_API_TEST_LOGS_OUTPUT_NAME }}
           path: ${{ github.workspace }}/${{ env.EP_ASYNC_API_TEST_LOGS_DIR }}
           if-no-files-found: error
+
+  finish:
+    needs: test
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
 
 ###
 # The End.
