@@ -61,13 +61,14 @@ export class EpAsyncApiDocument {
     if(appDomainName === undefined) {
       const specAppDomainName = this.get_X_EpApplicationDomainName();
       if(specAppDomainName === undefined) appDomainName = undefined;
-      else if(this.prefixEpApplicationDomainName !== undefined) appDomainName = `${this.prefixEpApplicationDomainName}/${specAppDomainName}`;
       else appDomainName = specAppDomainName;
     }
     if(appDomainName === undefined) throw new EpAsyncApiXtensionError(logName, this.constructor.name, "no application domain name defined", {
       asyncApiSpecTitle: this.getTitle(),
       xtensionKey: E_EpAsyncApiExtensions.X_EP_APPLICATION_DOMAIN_NAME,
     });
+    // add the prefix 
+    if(this.prefixEpApplicationDomainName !== undefined) appDomainName = `${this.prefixEpApplicationDomainName}/${appDomainName}`;
     return appDomainName;
   }
   
