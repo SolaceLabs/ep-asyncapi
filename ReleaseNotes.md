@@ -2,6 +2,11 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.3.1-alpha
+
+**Fixes:**
+  - fixed use of application domain prefix & overriding application domain name when determining resulting domain name for an Async API Document
+
 ## Version 0.3.0-alpha
 
 Inital release @solace-labs.
