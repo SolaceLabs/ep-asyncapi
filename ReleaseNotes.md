@@ -2,6 +2,15 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.3.2-alpha
+
+**Enhancements:**
+- **Parsing of api specs with file references**
+  - added parsing with relative file references
+- **Validation of api specs**
+  - added cascading validation of all elements of the spec
+
+
 ## Version 0.3.1-alpha
 
 **Fixes:**

@@ -21,8 +21,31 @@ export class EpAsyncApiChannelDocument {
     this.asyncApiChannelKey = asyncApiChannelKey;
     this.asyncApiChannel = asyncApiChannel;
   }
+  
+  public validate_BestPractices(): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+    // channel parameters
+    const epAsyncApiChannelParameterDocumentMap: T_EpAsyncApiChannelParameterDocumentMap | undefined = this.getEpAsyncApiChannelParameterDocumentMap();
+    if(epAsyncApiChannelParameterDocumentMap !== undefined) {
+      for(const [parameterName, epAsyncApiChannelParameterDocument] of epAsyncApiChannelParameterDocumentMap) {
+        epAsyncApiChannelParameterDocument.validate_BestPractices();
+      }  
+    }
+    // channel operations
+    const epAsynApiChannelPublishOperation: EpAsynApiChannelPublishOperation | undefined = this.getEpAsyncApiChannelPublishOperation();
+    if(epAsynApiChannelPublishOperation !== undefined) {
+      epAsynApiChannelPublishOperation.validate_BestPractices();
+    }
+    const epAsynApiChannelSubscribeOperation: EpAsyncApiChannelSubscribeOperation | undefined = this.getEpAsyncApiChannelSubscribeOperation();
+    if(epAsynApiChannelSubscribeOperation !== undefined) {
+      epAsynApiChannelSubscribeOperation.validate_BestPractices();
+    }
+  }
 
   public getAsyncApiChannel(): Channel { return this.asyncApiChannel; }
+
+  public getAsyncApiChannelKey(): string { return this.asyncApiChannelKey; }
 
   public getEpAsyncApiChannelParameterDocumentMap(): T_EpAsyncApiChannelParameterDocumentMap | undefined {
     if(!this.asyncApiChannel.hasParameters()) return undefined;
@@ -36,7 +59,7 @@ export class EpAsyncApiChannelDocument {
     return epAsyncApiChannelParameterDocumentMap;
   }
 
-  public getEpAsynApiChannelPublishOperation(): EpAsynApiChannelPublishOperation | undefined {
+  public getEpAsyncApiChannelPublishOperation(): EpAsynApiChannelPublishOperation | undefined {
     if(this.asyncApiChannel.hasPublish()) {
       return new EpAsynApiChannelPublishOperation(this.epAsyncApiDocument, this, this.asyncApiChannel.publish());
     }

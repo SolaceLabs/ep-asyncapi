@@ -1,11 +1,12 @@
 import yaml from "js-yaml";
 
 import { AsyncAPIDocument, Message, Channel } from '@asyncapi/parser';
-import { EpAsyncApiSpecError, EpAsyncApiXtensionError } from '../utils/EpAsyncApiErrors';
+import { EpAsyncApiBestPracticesError, EpAsyncApiSpecError, EpAsyncApiXtensionError } from '../utils/EpAsyncApiErrors';
 import { EpAsyncApiMessageDocument } from "./EpAsyncApiMessageDocument";
 import { EpAsyncApiChannelDocument } from "./EpAsyncApiChannelDocument";
 import { EpAsyncApiChannelParameterDocument } from "./EpAsyncApiChannelParameterDocument";
 import { EpAsynApiChannelPublishOperation, EpAsyncApiChannelSubscribeOperation } from "./EpAsyncApiChannelOperation";
+import EpAsyncApiSemVerUtils from "../utils/EpAsyncApiSemVerUtils";
 
 enum E_EpAsyncApiExtensions {
   X_EP_APPLICATION_DOMAIN_NAME = "x-ep-application-domain-name",
@@ -80,6 +81,32 @@ export class EpAsyncApiDocument {
     this.applicationDomainName = this.determineApplicationDomainName();
   }
 
+  public validate_BestPractices(): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+
+    // version must be in SemVer format
+    const versionStr: string = this.getVersion();
+    if(!EpAsyncApiSemVerUtils.isSemVerFormat({ versionString: versionStr })) {
+      throw new EpAsyncApiBestPracticesError(logName, this.constructor.name, undefined, {
+        asyncApiSpecTitle: this.getTitle(),
+        issue: "Please use semantic versioning format for API version.",
+        value: {
+          versionString: versionStr
+        }
+      });
+    }
+    // TODO: further validations
+    // check that all channels have a message - must not be inline
+    // validate channel param schemas - must be unique
+
+    // cascade validation to all elements
+    const epAsyncApiChannelDocumentMap: T_EpAsyncApiChannelDocumentMap = this.getEpAsyncApiChannelDocumentMap();
+    for(let [topic, epAsyncApiChannelDocument] of epAsyncApiChannelDocumentMap) {
+      epAsyncApiChannelDocument.validate_BestPractices();
+    }
+  }
+
   public getAsyncApiSpecVersion(): string { return this.asyncApiDocument.version(); }
 
   public getTitle(): string { return this.asyncApiDocument.info().title(); }
@@ -123,7 +150,7 @@ export class EpAsyncApiDocument {
     };
     const epAsyncApiChannelDocumentMap: T_EpAsyncApiChannelDocumentMap = this.getEpAsyncApiChannelDocumentMap();
     for(const [topic, epAsyncApiChannelDocument] of epAsyncApiChannelDocumentMap) {
-      const epAsynApiChannelPublishOperation: EpAsynApiChannelPublishOperation | undefined = epAsyncApiChannelDocument.getEpAsynApiChannelPublishOperation();
+      const epAsynApiChannelPublishOperation: EpAsynApiChannelPublishOperation | undefined = epAsyncApiChannelDocument.getEpAsyncApiChannelPublishOperation();
       if(epAsynApiChannelPublishOperation !== undefined) {
         const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = epAsynApiChannelPublishOperation.getEpAsyncApiMessageDocument()
         epAsyncApiEventNames.publishEventNames.push(epAsyncApiMessageDocument.getMessageName());
