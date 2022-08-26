@@ -2,6 +2,13 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.3.3-alpha
+
+**Enhancements:**
+- **EpAsyncApiChannelDocument**
+  - `getEpEventName()`: returns either `$.channels.{channel}.x-ep-event-name` or the channel/topic itself
+  - `getEpEventVersionDisplayName()`: returns either `$.channels.{channel}.x-ep-event-name` or empty string
+
 ## Version 0.3.2-alpha
 
 **Enhancements:**
