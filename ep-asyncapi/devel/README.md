@@ -1,7 +1,7 @@
 # Development ep-asyncapi
 
-
 ## Build
+
 ```bash
 npm install
 npm run build
@@ -14,7 +14,8 @@ npm test
 ```
 
 ### Run a Single Test
-````bash
+
+```bash
 # set the env
 source ./test/source.env.sh
 # run test
@@ -22,16 +23,17 @@ source ./test/source.env.sh
 npx mocha --config test/.mocharc.yml test/specs/test-pass/acme-retail.spec.ts
 # unset the env
 unset_source_env
-````
-
+```
 
 ## Link
+
 ```bash
-npm run build
+npm run dev:build
 npm link
 ```
 
 ### Consuming Link
+
 ```bash
 cd {consuming project}
 npm link @solace-labs/ep-asyncapi
@@ -39,6 +41,7 @@ npm list
 ```
 
 #### Unlink Consuming Link
+
 ```bash
 cd {consuming project}
 npm unlink --no-save @solace-labs/ep-asyncapi
@@ -46,8 +49,6 @@ npm unlink --no-save @solace-labs/ep-asyncapi
 npm install
 npm list
 ```
-
-
 
 ---
 

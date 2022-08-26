@@ -8,7 +8,7 @@ import { EpAsyncApiChannelDocument } from './EpAsyncApiChannelDocument';
 import { EpAsyncApiDocument } from './EpAsyncApiDocument';
 import { EpAsyncApiMessageDocument } from './EpAsyncApiMessageDocument';
 
-class EpAsyncApiChannelOperation {
+abstract class EpAsyncApiChannelOperation {
   protected epAsyncApiDocument: EpAsyncApiDocument;
   protected epAsyncApiChannelDocument: EpAsyncApiChannelDocument;
 
@@ -17,6 +17,17 @@ class EpAsyncApiChannelOperation {
     this.epAsyncApiChannelDocument = epAsyncApiChannelDocument;
   }
 
+  public validate_BestPractices(): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+
+    // add operation specific validations here
+
+    // cascade to message
+    const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = this.getEpAsyncApiMessageDocument();
+    epAsyncApiMessageDocument.validate_BestPractices();
+    
+  }
   // protected getCliMessageDocumentMapByMessageList(messageList: Array<Message>): CliMessageDocumentMap {
   //   const cliMessageDocumentMap: CliMessageDocumentMap = new Map<string, CliMessageDocument>();
   //   for(const message of messageList) {
@@ -26,6 +37,8 @@ class EpAsyncApiChannelOperation {
   //   return cliMessageDocumentMap;
   // }
 
+  protected abstract getEpAsyncApiMessageDocument(): EpAsyncApiMessageDocument;
+  
   protected getEpAsyncApiMessageDocumentFromOperation(asyncApiChannelOperation: SubscribeOperation | PublishOperation): EpAsyncApiMessageDocument {
     const funcName = 'getEpAsyncApiMessageDocumentFromOperation';
     const logName = `${EpAsyncApiChannelSubscribeOperation.name}.${funcName}()`;
