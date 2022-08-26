@@ -7,6 +7,7 @@ import { EpAsyncApiChannelDocument } from "./EpAsyncApiChannelDocument";
 import { EpAsyncApiChannelParameterDocument } from "./EpAsyncApiChannelParameterDocument";
 import { EpAsynApiChannelPublishOperation, EpAsyncApiChannelSubscribeOperation } from "./EpAsyncApiChannelOperation";
 import EpAsyncApiSemVerUtils from "../utils/EpAsyncApiSemVerUtils";
+import EpAsyncApiDocumentService from "../services/EpAsyncApiDocumentService";
 
 enum E_EpAsyncApiExtensions {
   X_EP_APPLICATION_DOMAIN_NAME = "x-ep-application-domain-name",
@@ -96,6 +97,7 @@ export class EpAsyncApiDocument {
         }
       });
     }
+    EpAsyncApiDocumentService.validateDisplayName({ displayName: this.getTitle() });
     // TODO: further validations
     // check that all channels have a message - must not be inline
     // validate channel param schemas - must be unique
@@ -150,15 +152,16 @@ export class EpAsyncApiDocument {
     };
     const epAsyncApiChannelDocumentMap: T_EpAsyncApiChannelDocumentMap = this.getEpAsyncApiChannelDocumentMap();
     for(const [topic, epAsyncApiChannelDocument] of epAsyncApiChannelDocumentMap) {
+      const epEventName: string = epAsyncApiChannelDocument.getEpEventName();  
       const epAsynApiChannelPublishOperation: EpAsynApiChannelPublishOperation | undefined = epAsyncApiChannelDocument.getEpAsyncApiChannelPublishOperation();
       if(epAsynApiChannelPublishOperation !== undefined) {
-        const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = epAsynApiChannelPublishOperation.getEpAsyncApiMessageDocument()
-        epAsyncApiEventNames.publishEventNames.push(epAsyncApiMessageDocument.getMessageName());
+        // const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = epAsynApiChannelPublishOperation.getEpAsyncApiMessageDocument()
+        epAsyncApiEventNames.publishEventNames.push(epEventName);
       }
       const epAsyncApiChannelSubscribeOperation: EpAsyncApiChannelSubscribeOperation | undefined = epAsyncApiChannelDocument.getEpAsyncApiChannelSubscribeOperation();
       if(epAsyncApiChannelSubscribeOperation !== undefined) {
-        const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = epAsyncApiChannelSubscribeOperation.getEpAsyncApiMessageDocument()
-        epAsyncApiEventNames.subscribeEventNames.push(epAsyncApiMessageDocument.getMessageName());
+        // const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = epAsyncApiChannelSubscribeOperation.getEpAsyncApiMessageDocument()
+        epAsyncApiEventNames.subscribeEventNames.push(epEventName);
       }
     }
     return epAsyncApiEventNames;
