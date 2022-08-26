@@ -113,6 +113,17 @@ export class EpAsyncApiBestPracticesError extends EpAsyncApiError {
   }
 }
 
+export class EpAsyncApiValidationError extends EpAsyncApiError {
+  protected static DefaultDescription = 'EP Async Api Validation Error';
+  public validationError: any;
+  public value: any;
+  constructor(internalLogName: string, internalModuleName: string, internalMessage: string = EpAsyncApiValidationError.DefaultDescription, validationError: any, value: any) {
+    super(internalLogName, internalModuleName, internalMessage);
+    this.validationError = validationError;
+    this.value = value;
+  }
+}
+
 export type T_EpAsyncApiXtensionErrorDetails = {
   asyncApiSpecTitle: string;
   xtensionKey: string;
