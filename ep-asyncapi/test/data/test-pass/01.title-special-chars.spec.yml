@@ -1,11 +1,8 @@
 asyncapi: '2.4.0'
-id: urn:com:solace-labs:ep-asyncapi:test
 x-ep-application-domain-name: solace-labs/ep-asyncapi/test
 info:
-  title: begin slash=/,amp;=&,star=*,quotes='' end
+  title: "slash=/,amp;=&,star=*,quotes=''"
   version: '1.2.9'
-  # description: |
-
   license:
     name: Apache 2.0
 
@@ -14,10 +11,7 @@ defaultContentType: application/json
 channels:
 
   solace-labs/test:
-    description: Test channel.
     publish:
-      # summary: Receive till receipts from stores.
-      # operationId: receiveStoreTillReceipts
       message:
         $ref: '#/components/messages/test'
 

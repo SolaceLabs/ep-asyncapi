@@ -45,6 +45,15 @@ export class EpAsyncApiError extends Error {
   }
 }
 
+export class EpAsyncApiInternalError extends EpAsyncApiError {
+  public static DefaultDescription = 'EP Async Api Internal Error';
+  public error: any;
+  constructor(internalLogName: string, internalModuleName: string, error: any) {
+    super(internalLogName, internalModuleName, EpAsyncApiInternalError.DefaultDescription);
+    this.error = error;
+  } 
+}
+
 export class EpAsyncApiParserError extends EpAsyncApiError {
   protected static DefaultDescription = 'Async Api Parser Error';
   private specFilePath: string;
@@ -99,28 +108,25 @@ export class EpAsyncApiMessageError extends EpAsyncApiError {
   }
 }
 
-export type T_EpAsyncApiBestPracticesErrorDetails = {
+export type T_EpAsyncApiValidationErrorDetails = {
   asyncApiSpecTitle: string;
-  issue: string;
+  issues: any;
   value: any;
 }
-export class EpAsyncApiBestPracticesError extends EpAsyncApiError {
-  protected static DefaultDescription = 'EP Async Api Best Practices Error';
-  private details: T_EpAsyncApiBestPracticesErrorDetails;
-  constructor(internalLogName: string, internalModuleName: string, internalMessage: string = EpAsyncApiBestPracticesError.DefaultDescription, details: T_EpAsyncApiBestPracticesErrorDetails) {
+export class EpAsyncApiValidationError extends EpAsyncApiError {
+  protected static DefaultDescription = 'EP Async Api Validation Error';
+  public details: T_EpAsyncApiValidationErrorDetails;
+  constructor(internalLogName: string, internalModuleName: string, internalMessage: string = EpAsyncApiValidationError.DefaultDescription, details: T_EpAsyncApiValidationErrorDetails) {
     super(internalLogName, internalModuleName, internalMessage);
     this.details = details;
   }
 }
-
-export class EpAsyncApiValidationError extends EpAsyncApiError {
-  protected static DefaultDescription = 'EP Async Api Validation Error';
-  public validationError: any;
-  public value: any;
-  constructor(internalLogName: string, internalModuleName: string, internalMessage: string = EpAsyncApiValidationError.DefaultDescription, validationError: any, value: any) {
+export class EpAsyncApiBestPracticesError extends EpAsyncApiError {
+  protected static DefaultDescription = 'EP Async Api Best Practices Error';
+  private details: T_EpAsyncApiValidationErrorDetails;
+  constructor(internalLogName: string, internalModuleName: string, internalMessage: string = EpAsyncApiBestPracticesError.DefaultDescription, details: T_EpAsyncApiValidationErrorDetails) {
     super(internalLogName, internalModuleName, internalMessage);
-    this.validationError = validationError;
-    this.value = value;
+    this.details = details;
   }
 }
 

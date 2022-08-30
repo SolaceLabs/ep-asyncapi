@@ -4,7 +4,7 @@ import {
   valid as SemVerValid 
 } from "semver";
 
-export class EpAsyncApiSemVerUtils {
+export class EpAsyncApiUtils {
 
   public isSemVerFormat({ versionString }:{
     versionString: string;
@@ -19,4 +19,4 @@ export class EpAsyncApiSemVerUtils {
   }
 
 }
-export default new EpAsyncApiSemVerUtils();
+export default new EpAsyncApiUtils();

@@ -2,8 +2,9 @@ import {
   Channel, 
   ChannelParameter, 
 } from '@asyncapi/parser';
-import EpAsyncApiDocumentService from '../services/EpAsyncApiDocumentService';
-import { EpAsyncApiValidationError } from '../utils/EpAsyncApiErrors';
+import { $Event, $EventVersion } from '@solace-labs/ep-openapi-node';
+import { Validator, ValidatorResult } from 'jsonschema';
+import { EpAsyncApiInternalError, EpAsyncApiValidationError } from '../utils/EpAsyncApiErrors';
 import { EpAsynApiChannelPublishOperation, EpAsyncApiChannelSubscribeOperation } from './EpAsyncApiChannelOperation';
 import { 
   EpAsyncApiChannelParameterDocument, 
@@ -20,38 +21,119 @@ export class EpAsyncApiChannelDocument {
   private epAsyncApiDocument: EpAsyncApiDocument;
   private asyncApiChannelKey: string;
   private asyncApiChannel: Channel;
-  private epEventName: string;
-  private epEventVersionDisplayName: string;
+  private epEventName?: string;
+  private epEventVersionName?: string;
 
   constructor(epAsyncApiDocument: EpAsyncApiDocument, asyncApiChannelKey: string, asyncApiChannel: Channel) {
     this.epAsyncApiDocument = epAsyncApiDocument;
     this.asyncApiChannelKey = asyncApiChannelKey;
     this.asyncApiChannel = asyncApiChannel;
-    this.epEventName = this.createEpEventName();
-    this.epEventVersionDisplayName = this.createEpEventVersionDisplayName();
   }
   
   private get_X_EpEventName(): string | undefined {
     if(this.asyncApiChannel.hasExtension(E_EpAsyncApiExtensions.X_EP_EVENT_NAME)) return this.asyncApiChannel.extension(E_EpAsyncApiExtensions.X_EP_EVENT_NAME);
     return undefined;
   }
-  private createEpEventName(): string {
+  private createEpEventName() {
+    if(this.epEventName !== undefined) return;
     const xEpEventName: string | undefined = this.get_X_EpEventName();
-    if(xEpEventName !== undefined) return xEpEventName;
-    return this.asyncApiChannelKey;
+    if(xEpEventName !== undefined) this.epEventName = xEpEventName;
+    else this.epEventName = this.asyncApiChannelKey;
   }
-  private createEpEventVersionDisplayName(): string {
+  private createEpEventVersionName() {
+    if(this.epEventVersionName !== undefined) return;
     try {
-      EpAsyncApiDocumentService.validateDisplayName({ displayName: this.epEventName });
-      return this.epEventName;
+      this._validate_EpEventVersionName(this.getEpEventName());
+      this.epEventVersionName = this.getEpEventName();
     } catch (e: any) {
       if(e instanceof EpAsyncApiValidationError) {
-        // // truncate it
-        // return this.asyncApiChannelKey.substring(0, 39);
-        // return empty string
-        return '';
+        // set to empty string
+        this.epEventVersionName = '';
       }
-      throw e;
+    }
+  }
+
+  private validate_EpName = () => {
+    const funcName = 'validate_EpName';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+    // WORKAROUND_UNTIL_EP_API_FIXED
+    const schema = {
+      ...$Event.properties.name,
+      maxLength: 60,
+    }
+
+    this.createEpEventName();
+    if(this.epEventName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventName === undefined');
+    const v: Validator = new Validator();
+    const validateResult: ValidatorResult = v.validate(this.epEventName, schema);
+
+    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
+      asyncApiSpecTitle: this.epAsyncApiDocument.getTitle(),
+      issues: validateResult.errors,
+      value: {
+        epEventName: this.epEventName,
+        length: this.epEventName.length
+      }
+    });
+  }
+
+  private _validate_EpEventVersionName = (epEventVersionName: string): string => {
+    const funcName = '_validate_EpEventVersionName';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+    const schema = $EventVersion.properties.displayName;
+    const v: Validator = new Validator();
+    const validateResult: ValidatorResult = v.validate(epEventVersionName, schema);
+    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
+      asyncApiSpecTitle: this.epAsyncApiDocument.getTitle(),
+      issues: validateResult.errors,
+      value: {
+        epEventVersionName: epEventVersionName,
+        length: epEventVersionName.length
+      }
+    });
+    return epEventVersionName;
+  }
+
+  private validate_EpEventVersionName = () => {
+    const funcName = 'validate_EpEventVersionName';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+    const schema = $EventVersion.properties.displayName;
+
+    this.createEpEventVersionName();
+    if(this.epEventVersionName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventVersionName === undefined');
+    const v: Validator = new Validator();
+    const validateResult: ValidatorResult = v.validate(this.epEventVersionName, schema);
+
+    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
+      asyncApiSpecTitle: this.epAsyncApiDocument.getTitle(),
+      issues: validateResult.errors,
+      value: {
+        epEventVersionName: this.epEventVersionName
+      }
+    });
+  }
+
+  public validate(): void {
+    const funcName = 'validate';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    // this doc
+    this.validate_EpName();
+    this.validate_EpEventVersionName();
+    // channel parameters
+    const epAsyncApiChannelParameterDocumentMap: T_EpAsyncApiChannelParameterDocumentMap | undefined = this.getEpAsyncApiChannelParameterDocumentMap();
+    if(epAsyncApiChannelParameterDocumentMap !== undefined) {
+      for(const [parameterName, epAsyncApiChannelParameterDocument] of epAsyncApiChannelParameterDocumentMap) {
+        epAsyncApiChannelParameterDocument.validate();
+      }  
+    }
+    // channel operations
+    const epAsynApiChannelPublishOperation: EpAsynApiChannelPublishOperation | undefined = this.getEpAsyncApiChannelPublishOperation();
+    if(epAsynApiChannelPublishOperation !== undefined) {
+      epAsynApiChannelPublishOperation.validate();
+    }
+    const epAsynApiChannelSubscribeOperation: EpAsyncApiChannelSubscribeOperation | undefined = this.getEpAsyncApiChannelSubscribeOperation();
+    if(epAsynApiChannelSubscribeOperation !== undefined) {
+      epAsynApiChannelSubscribeOperation.validate();
     }
   }
 
@@ -59,7 +141,7 @@ export class EpAsyncApiChannelDocument {
     const funcName = 'validate_BestPractices';
     const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
 
-    EpAsyncApiDocumentService.validateDisplayName({ displayName: this.getEpEventVersionDisplayName() });
+    // add best practices validations for channel here
 
     // channel parameters
     const epAsyncApiChannelParameterDocumentMap: T_EpAsyncApiChannelParameterDocumentMap | undefined = this.getEpAsyncApiChannelParameterDocumentMap();
@@ -88,9 +170,27 @@ export class EpAsyncApiChannelDocument {
    * 1) channel extension: x-ep-event-name
    * 2) channel topic
    */
-  public getEpEventName(): string { return this.epEventName; }
+  public getEpEventName(): string { 
+    const funcName = 'getEpEventName';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    if(this.epEventName === undefined) {
+      this.createEpEventName();
+      this.validate_EpName();
+    }
+    if(this.epEventName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventName === undefined');
+    return this.epEventName; 
+  }
 
-  public getEpEventVersionDisplayName(): string { return this.epEventVersionDisplayName; }
+  public getEpEventVersionName(): string { 
+    const funcName = 'getEpEventVersionName';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    if(this.epEventVersionName === undefined) {
+      this.createEpEventVersionName();
+      this.validate_EpEventVersionName();
+    }
+    if(this.epEventVersionName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventVersionName === undefined');
+    return this.epEventVersionName; 
+  }
 
   public getEpAsyncApiChannelParameterDocumentMap(): T_EpAsyncApiChannelParameterDocumentMap | undefined {
     if(!this.asyncApiChannel.hasParameters()) return undefined;
