@@ -2,6 +2,13 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.4.0-alpha
+
+**Fixes:**
+  - added validation of Event.name length to EpAsyncApiChannelDocument
+  - hardcoded to length=60 as workaround
+
+
 ## Version 0.3.3-alpha
 
 **Enhancements:**
