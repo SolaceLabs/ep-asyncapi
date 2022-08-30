@@ -27,7 +27,7 @@ describe(`${scriptName}`, () => {
       try {
         Global_AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/01.title-special-chars.spec.yml`;
         Global_AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test";
-        Global_Title = "begin slash=/,amp;=&,star=*,quotes='' end"
+        Global_Title = "slash=/,amp;=&,star=*,quotes=''";
       } catch(e) {
         expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
         expect(false, TestLogger.createEpAsyncApiTestFailMessage('failed', e)).to.be.true;
@@ -52,7 +52,7 @@ describe(`${scriptName}`, () => {
         const title = Global_EpAsyncApiDocument.getTitle();
         expect(title, 'failed').to.eq(Global_Title);
         
-        const expected_titleAsFilePath = "begin-slash-amp-star-quotes-end";
+        const expected_titleAsFilePath = "slash-amp-star-quotes-";
         const titleAsFilePath = Global_EpAsyncApiDocument.getTitleAsFilePath();
         expect(titleAsFilePath, 'failed').to.eq(expected_titleAsFilePath);
         

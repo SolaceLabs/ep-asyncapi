@@ -12,6 +12,11 @@ export class EpAsyncApiChannelParameterDocument {
     this.asyncApiChannelParameter = asyncApiChannelParameter;
   }
 
+  public validate(): void {
+    const funcName = 'validate';
+    const logName = `${EpAsyncApiChannelParameterDocument.name}.${funcName}()`;
+    // no validation
+  }
   public validate_BestPractices(): void {
     const funcName = 'validate_BestPractices';
     const logName = `${EpAsyncApiChannelParameterDocument.name}.${funcName}()`;

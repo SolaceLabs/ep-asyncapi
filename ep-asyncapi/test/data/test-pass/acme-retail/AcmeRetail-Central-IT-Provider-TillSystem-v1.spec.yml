@@ -24,6 +24,7 @@ defaultContentType: application/json
 channels:
 
   catalyst-labs/acme-retail/till-system/v1/{regionId_v1}/{storeId_v1}/receipt:
+    x-ep-event-name: TillReceipt
     description: The topic to receive till receipts from stores on.
     parameters:
       storeId_v1:
@@ -38,6 +39,7 @@ channels:
         $ref: '#/components/messages/storeTillReceipt-v1'
 
   catalyst-labs/acme-retail/till-system/v1/{regionId_v1}/{storeId_v1}/error:
+    x-ep-event-name: TillSystemError
     description: The topic to send errors as response to a transaction on.
     parameters:
       storeId_v1:

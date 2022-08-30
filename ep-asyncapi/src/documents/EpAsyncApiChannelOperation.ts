@@ -17,6 +17,18 @@ abstract class EpAsyncApiChannelOperation {
     this.epAsyncApiChannelDocument = epAsyncApiChannelDocument;
   }
 
+  public validate(): void {
+    const funcName = 'validate';
+    const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
+
+    // add operation specific validations here
+
+    // cascade to message
+    const epAsyncApiMessageDocument: EpAsyncApiMessageDocument = this.getEpAsyncApiMessageDocument();
+    epAsyncApiMessageDocument.validate();
+    
+  }
+
   public validate_BestPractices(): void {
     const funcName = 'validate_BestPractices';
     const logName = `${EpAsyncApiChannelDocument.name}.${funcName}()`;
@@ -28,14 +40,6 @@ abstract class EpAsyncApiChannelOperation {
     epAsyncApiMessageDocument.validate_BestPractices();
     
   }
-  // protected getCliMessageDocumentMapByMessageList(messageList: Array<Message>): CliMessageDocumentMap {
-  //   const cliMessageDocumentMap: CliMessageDocumentMap = new Map<string, CliMessageDocument>();
-  //   for(const message of messageList) {
-  //     const cliMessageDocument = new CliMessageDocument(this.asyncApiDocument, this.asyncApiChannel, message);
-  //     cliMessageDocumentMap.set(message.name(), cliMessageDocument);
-  //   }
-  //   return cliMessageDocumentMap;
-  // }
 
   protected abstract getEpAsyncApiMessageDocument(): EpAsyncApiMessageDocument;
   

@@ -13,7 +13,7 @@ export class EpAsyncApiMessageDocument {
   private asyncApiMessage: Message;
   private contentType: E_EpAsyncApiContentTypes;
   public static ContentTypeIssue = 'contentType === undefined, neither message has a contentType nor api has a defaultContentType';
-
+  
   private determineContentType(): E_EpAsyncApiContentTypes {
     const funcName = 'determineContentType';
     const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
@@ -54,14 +54,20 @@ export class EpAsyncApiMessageDocument {
     this.contentType = this.determineContentType();
   }
 
-  public validate_BestPractices(): void {
-    const funcName = 'validate_BestPractices';
+  public validate(): void {
+    const funcName = 'validate';
     const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
 
     // validate content type
     // content type already determined in constructor
     // this.determineContentType();
     
+  }
+
+  public validate_BestPractices(): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
+    // add specific validations
   }
 
   public getMessageKey(): string { return this.asyncApiMessageKey; }

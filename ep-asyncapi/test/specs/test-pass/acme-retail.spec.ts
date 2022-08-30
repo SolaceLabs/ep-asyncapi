@@ -45,5 +45,17 @@ describe(`${scriptName}`, () => {
       }
     });
 
+    it(`${scriptName}: should validate best practices`, async () => {
+      try {
+        const epAsyncApiDocument: EpAsyncApiDocument = await EpAsyncApiDocumentService.createFromFile({
+          filePath: AsyncApiSpecFile,
+        });
+        epAsyncApiDocument.validate_BestPractices();
+      } catch(e) {
+        expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
+        expect(false, TestLogger.createEpAsyncApiTestFailMessage('failed', e)).to.be.true;
+      }
+    });
+
 });
 

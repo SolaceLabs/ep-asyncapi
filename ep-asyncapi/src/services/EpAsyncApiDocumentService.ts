@@ -3,36 +3,9 @@ import path from 'path';
 
 import { parse, AsyncAPIDocument } from '@asyncapi/parser';
 import { EpAsyncApiDocument } from '../documents/EpAsyncApiDocument';
-import { EpAsyncApiParserError, EpAsyncApiValidationError } from '../utils/EpAsyncApiErrors';
-import { $eventApiVersion } from '@solace-labs/ep-openapi-node';
-import { Validator, ValidatorResult } from 'jsonschema';
+import { EpAsyncApiParserError } from '../utils/EpAsyncApiErrors';
 
 export class EpAsyncApiDocumentService {
-
-  public validate_BestPractices({ epAsyncApiDocument }:{
-    epAsyncApiDocument: EpAsyncApiDocument
-  }): void {
-    epAsyncApiDocument.validate_BestPractices();
-  }
-
-  public validateDisplayName = ({ displayName }: {
-    displayName: string;
-  }): string => {
-    const funcName = 'validateDisplayName';
-    const logName = `${EpAsyncApiDocumentService.name}.${funcName}()`;
-    const schema = $eventApiVersion.properties.displayName;
-
-    const v: Validator = new Validator();
-    const validateResult: ValidatorResult = v.validate(displayName, schema);
-
-    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, validateResult.errors, {
-      value: {
-        displayName: displayName
-      }
-    });
-    return displayName;
-  }
-
 
   private parse = async({ apiSpec, apiSpecFilePath }:{
     apiSpecFilePath: string;
@@ -72,6 +45,7 @@ export class EpAsyncApiDocumentService {
       apiSpecFilePath: filePath
     });
     const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, prefixEpApplicationDomainName);
+    epAsyncApiDocument.validate();
     return epAsyncApiDocument;
   }
 

@@ -1,13 +1,14 @@
 import yaml from "js-yaml";
 
 import { AsyncAPIDocument, Message, Channel } from '@asyncapi/parser';
-import { EpAsyncApiBestPracticesError, EpAsyncApiSpecError, EpAsyncApiXtensionError } from '../utils/EpAsyncApiErrors';
+import { EpAsyncApiInternalError, EpAsyncApiSpecError, EpAsyncApiValidationError, EpAsyncApiXtensionError } from '../utils/EpAsyncApiErrors';
 import { EpAsyncApiMessageDocument } from "./EpAsyncApiMessageDocument";
 import { EpAsyncApiChannelDocument } from "./EpAsyncApiChannelDocument";
 import { EpAsyncApiChannelParameterDocument } from "./EpAsyncApiChannelParameterDocument";
 import { EpAsynApiChannelPublishOperation, EpAsyncApiChannelSubscribeOperation } from "./EpAsyncApiChannelOperation";
-import EpAsyncApiSemVerUtils from "../utils/EpAsyncApiSemVerUtils";
-import EpAsyncApiDocumentService from "../services/EpAsyncApiDocumentService";
+import EpAsyncApiUtils from "../utils/EpAsyncApiUtils";
+import { $EventApi, $eventApiVersion } from "@solace-labs/ep-openapi-node";
+import { Validator, ValidatorResult } from 'jsonschema';
 
 enum E_EpAsyncApiExtensions {
   X_EP_APPLICATION_DOMAIN_NAME = "x-ep-application-domain-name",
@@ -38,6 +39,9 @@ export class EpAsyncApiDocument {
   private prefixEpApplicationDomainName: string | undefined;
   private asyncApiDocumentJson: any;
   private applicationDomainName: string;
+  private epEventApiName?: string;
+  private epEventApiVersionName?: string;
+  public static NotSemVerIssue = 'Please use semantic versioning format for API version.';
 
   private getJSON(asyncApiDocument: AsyncAPIDocument): any {
     const funcName = 'getJSON';
@@ -55,8 +59,8 @@ export class EpAsyncApiDocument {
     return this.asyncApiDocumentJson[E_EpAsyncApiExtensions.X_EP_APPLICATION_DOMAIN_NAME];
   }
 
-  private determineApplicationDomainName(): string {
-    const funcName = 'determineApplicationDomainName';
+  private createApplicationDomainName(): string {
+    const funcName = 'createApplicationDomainName';
     const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
 
     let appDomainName: string | undefined = this.overrideEpApplicationDomainName;
@@ -74,33 +78,96 @@ export class EpAsyncApiDocument {
     return appDomainName;
   }
   
+  private createEpEventApiName() {
+    if(this.epEventApiName !== undefined) return;
+    const xEpEventApiName: string = this.getTitle();
+    this.epEventApiName = xEpEventApiName;
+  }
+  private createEpEventApiVersionName() {
+    if(this.epEventApiVersionName !== undefined) return;
+    const xEpEventApiVersionName: string = this.getTitle();
+    this.epEventApiVersionName = xEpEventApiVersionName;
+  }
+
   constructor(asyncApiDocument: AsyncAPIDocument, overrideEpApplicationDomainName: string | undefined, prefixEpApplicationDomainName: string | undefined) {
     this.asyncApiDocument = asyncApiDocument;
     this.asyncApiDocumentJson = this.getJSON(asyncApiDocument);
     this.overrideEpApplicationDomainName = overrideEpApplicationDomainName;
     this.prefixEpApplicationDomainName = prefixEpApplicationDomainName;
-    this.applicationDomainName = this.determineApplicationDomainName();
+    this.applicationDomainName = this.createApplicationDomainName();
   }
 
-  public validate_BestPractices(): void {
-    const funcName = 'validate_BestPractices';
+  private validate_EpEventApiName = () => {
+    const funcName = 'validate_EpEventApiName';
     const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    const schema = $EventApi.properties.name;
 
-    // version must be in SemVer format
+    this.createEpEventApiName();
+    if(this.epEventApiName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventApiName === undefined');
+    const v: Validator = new Validator();
+    const validateResult: ValidatorResult = v.validate(this.epEventApiName, schema);
+
+    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
+      asyncApiSpecTitle: this.getTitle(),
+      issues: validateResult.errors,
+      value: {
+        epEventApiName: this.epEventApiName
+      }
+    });
+  }
+
+  private validate_EpEventApiVersionName = () => {
+    const funcName = 'validate_EpEventApiVersionName';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    const schema = $eventApiVersion.properties.displayName;
+
+    this.createEpEventApiVersionName();
+    if(this.epEventApiVersionName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventApiVersionName === undefined');
+    const v: Validator = new Validator();
+    const validateResult: ValidatorResult = v.validate(this.epEventApiVersionName, schema);
+
+    if(!validateResult.valid) throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
+      asyncApiSpecTitle: this.getTitle(),
+      issues: validateResult.errors,
+      value: {
+        epEventApiVersionName: this.epEventApiVersionName
+      }
+    });
+  }
+
+  private validate_VersionIsSemVerFormat(): void {
+    const funcName = 'validate_VersionIsSemVerFormat';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
     const versionStr: string = this.getVersion();
-    if(!EpAsyncApiSemVerUtils.isSemVerFormat({ versionString: versionStr })) {
-      throw new EpAsyncApiBestPracticesError(logName, this.constructor.name, undefined, {
+    if(!EpAsyncApiUtils.isSemVerFormat({ versionString: versionStr })) {
+      throw new EpAsyncApiValidationError(logName, this.constructor.name, undefined, {
         asyncApiSpecTitle: this.getTitle(),
-        issue: "Please use semantic versioning format for API version.",
+        issues: EpAsyncApiDocument.NotSemVerIssue,
         value: {
           versionString: versionStr
         }
       });
     }
-    EpAsyncApiDocumentService.validateDisplayName({ displayName: this.getTitle() });
-    // TODO: further validations
-    // check that all channels have a message - must not be inline
-    // validate channel param schemas - must be unique
+  }
+
+  public validate(): void {
+    const funcName = 'validate';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    // this doc
+    this.validate_VersionIsSemVerFormat();
+    this.validate_EpEventApiName();
+    this.validate_EpEventApiVersionName();
+    // cascade validation to all elements
+    const epAsyncApiChannelDocumentMap: T_EpAsyncApiChannelDocumentMap = this.getEpAsyncApiChannelDocumentMap();
+    for(let [topic, epAsyncApiChannelDocument] of epAsyncApiChannelDocumentMap) {
+      epAsyncApiChannelDocument.validate();
+    }
+  }
+  public validate_BestPractices(): void {
+    const funcName = 'validate_BestPractices';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+
+    // add best practices validations for spec here
 
     // cascade validation to all elements
     const epAsyncApiChannelDocumentMap: T_EpAsyncApiChannelDocumentMap = this.getEpAsyncApiChannelDocumentMap();
@@ -130,6 +197,29 @@ export class EpAsyncApiDocument {
   public getTitleAsFileName(ext: string): string {
     return `${this.getTitleAsFilePath()}.${ext}`;
   }
+
+  public getEpEventApiName(): string {
+    const funcName = 'getEpEventApiName';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    if(this.epEventApiName === undefined) {
+      this.createEpEventApiName();
+      this.validate_EpEventApiName();
+    }
+    if(this.epEventApiName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventApiName === undefined');
+    return this.epEventApiName; 
+  }
+
+  public getEpEventApiVersionName(): string { 
+    const funcName = 'getEpEventApiVersionName';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+    if(this.epEventApiVersionName === undefined) {
+      this.createEpEventApiVersionName();
+      this.validate_EpEventApiVersionName();
+    }
+    if(this.epEventApiVersionName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventApiVersionName === undefined');
+    return this.epEventApiVersionName; 
+  }
+
 
   public getAsSanitizedJson(): any {
     const sanitized = JSON.parse(JSON.stringify(this.asyncApiDocumentJson, (k,v) => {
