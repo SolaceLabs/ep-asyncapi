@@ -2,6 +2,10 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.5.0-alpha
+**Enhancements:**
+- Add support for Avro payload parsing
+
 ## Version 0.4.0-alpha
 
 **Fixes:**
