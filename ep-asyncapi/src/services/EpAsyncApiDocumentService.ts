@@ -1,9 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-import { parse, AsyncAPIDocument } from '@asyncapi/parser';
+import { parse, registerSchemaParser, AsyncAPIDocument } from '@asyncapi/parser';
+// @ts-ignore
+import avroSchemaParser from '@asyncapi/avro-schema-parser';
+
 import { EpAsyncApiDocument } from '../documents/EpAsyncApiDocument';
 import { EpAsyncApiParserError } from '../utils/EpAsyncApiErrors';
+
+
+registerSchemaParser(avroSchemaParser);
 
 export class EpAsyncApiDocumentService {
 
