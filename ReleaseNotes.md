@@ -2,6 +2,13 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.6.0-alpha
+
+**Enhancements:**
+- **EpAsyncApiMessageDocument**
+  - added method `getSchemaFormatType()`
+    - returns default `application/json` or `application/avro` if `avro` found in schemaFormat in message definition
+
 ## Version 0.5.0-alpha
 **Enhancements:**
 - Add support for Avro payload parsing
