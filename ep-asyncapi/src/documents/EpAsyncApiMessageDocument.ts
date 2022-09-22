@@ -6,12 +6,18 @@ import {
   E_EpAsyncApiContentTypes 
 } from './EpAsyncApiDocument';
 
+export enum E_EpAsyncApiSchemaFormatType {
+  APPLICATION_JSON = "application/json",
+  APPLICATION_AVRO = "application/avro"
+}
+
 export class EpAsyncApiMessageDocument {
   private epAsyncApiDocument: EpAsyncApiDocument;
   private epAsyncApiChannelDocument: EpAsyncApiChannelDocument | undefined;
   private asyncApiMessageKey: string;
   private asyncApiMessage: Message;
   private contentType: E_EpAsyncApiContentTypes;
+  private schemaFormatType: E_EpAsyncApiSchemaFormatType;
   public static ContentTypeIssue = 'contentType === undefined, neither message has a contentType nor api has a defaultContentType';
   
   private determineContentType(): E_EpAsyncApiContentTypes {
@@ -28,6 +34,24 @@ export class EpAsyncApiMessageDocument {
       apiMessageContent: this.asyncApiMessage,
     });
     return contentType as E_EpAsyncApiContentTypes;
+  }
+
+  private determineSchemaFormatType(): E_EpAsyncApiSchemaFormatType {
+    // const funcName = 'determineSchemaFormatType';
+    // const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
+
+    const schemaFormatString: string | undefined = this.asyncApiMessage.originalSchemaFormat();
+
+    // schemaFormatString = application/vnd.aai.asyncapi;version=2.4.0
+    // schemaFormatString = application/vnd.aai.asyncapi;version=2.4.0
+    // schemaFormatString = application/vnd.apache.avro;version=1.9.0
+    // schemaFormatString = application/vnd.apache.avro+json;version=1.9.0
+    // schemaFormatString = application/schema+yaml;version=draft-07
+    // schemaFormatString = application/schema+json;version=draft-07
+    // schemaFormatString = application/vnd.apache.avro+yaml;version=1.9.0
+
+    if(schemaFormatString.includes('avro')) return E_EpAsyncApiSchemaFormatType.APPLICATION_AVRO;
+    return E_EpAsyncApiSchemaFormatType.APPLICATION_JSON;
   }
 
   private extractMessageKey(asyncApiMessage: Message): string {
@@ -52,6 +76,7 @@ export class EpAsyncApiMessageDocument {
     this.asyncApiMessageKey = asyncApiMessageKey ? asyncApiMessageKey : this.extractMessageKey(asyncApiMessage);
     this.asyncApiMessage = asyncApiMessage;
     this.contentType = this.determineContentType();
+    this.schemaFormatType = this.determineSchemaFormatType();
   }
 
   public validate(): void {
@@ -81,6 +106,8 @@ export class EpAsyncApiMessageDocument {
   }
 
   public getContentType(): E_EpAsyncApiContentTypes { return this.contentType; }
+
+  public getSchemaFormatType(): E_EpAsyncApiSchemaFormatType { return this.schemaFormatType; }
 
   public getPayloadSchema(): Schema {
     return this.asyncApiMessage.payload();
