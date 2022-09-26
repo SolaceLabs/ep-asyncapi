@@ -18,5 +18,11 @@ export class EpAsyncApiUtils {
     }
   }
 
+  public assertNever = (extLogName: string, x: never): never => {
+    const funcName = 'assertNever';
+    const logName = `${EpAsyncApiUtils.name}.${funcName}()`;
+    throw new Error(`${logName}:${extLogName}: unexpected object: ${JSON.stringify(x)}`);
+  }
+
 }
 export default new EpAsyncApiUtils();

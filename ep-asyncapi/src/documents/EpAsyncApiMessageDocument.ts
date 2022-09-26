@@ -5,6 +5,7 @@ import {
   EpAsyncApiDocument, 
   E_EpAsyncApiContentTypes 
 } from './EpAsyncApiDocument';
+import EpAsyncApiUtils from '../utils/EpAsyncApiUtils';
 
 export enum E_EpAsyncApiSchemaFormatType {
   APPLICATION_JSON = "application/json",
@@ -113,8 +114,12 @@ export class EpAsyncApiMessageDocument {
     return this.asyncApiMessage.payload();
   }
 
+  public getOriginalPayloadSchema(): any {
+    return this.asyncApiMessage.originalPayload();
+  }
+
   public getPayloadSchemaAsString(): string {
-    const schema: Schema = this.asyncApiMessage.payload();
+    const schema: Schema = this.getPayloadSchema();
     return JSON.stringify(schema.json());
   }
 
@@ -136,12 +141,23 @@ export class EpAsyncApiMessageDocument {
   }
 
   public getSchemaAsSanitizedJson(): any {
-    const schema: Schema = this.asyncApiMessage.payload();
-    const sanitized = JSON.parse(JSON.stringify(schema.json(), (k,v) => {
+    const funcName = 'getSchemaAsSanitizedJson';
+    const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
+    let anySchema: any;
+    switch(this.schemaFormatType) {
+      case E_EpAsyncApiSchemaFormatType.APPLICATION_JSON:
+        anySchema = this.asyncApiMessage.payload().json();
+        break;
+      case E_EpAsyncApiSchemaFormatType.APPLICATION_AVRO:
+        anySchema = this.asyncApiMessage.originalPayload();
+        break;
+      default:
+        EpAsyncApiUtils.assertNever(logName, this.schemaFormatType);
+    }
+    const sanitized = JSON.parse(JSON.stringify(anySchema, (k,v) => {
       if(k.startsWith("x-parser")) return undefined;
       return v;
     }));
-
     return sanitized;
   }
 

@@ -6,4 +6,10 @@ export class TestUtils {
     return uuidv4();
   }
 
+  public static assertNever = (extLogName: string, x: never): never => {
+    const funcName = 'assertNever';
+    const logName = `${TestUtils.name}.${funcName}()`;
+    throw new Error(`${logName}:${extLogName}: unexpected object: ${JSON.stringify(x)}`);
+  }
+
 }

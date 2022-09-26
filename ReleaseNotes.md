@@ -2,6 +2,13 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.6.1-alpha
+
+**Enhancements:**
+- **EpAsyncApiMessageDocument**
+  - method `getSchemaAsSanitizedJson()`
+    - returns original payload for avro schemas
+
 ## Version 0.6.0-alpha
 
 **Enhancements:**
