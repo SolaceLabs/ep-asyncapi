@@ -40,9 +40,10 @@ export class EpAsyncApiDocumentService {
     }
   }
 
-  public createFromFile = async({ filePath, overrideEpApplicationDomainName, prefixEpApplicationDomainName }:{
+  public createFromFile = async({ filePath, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName }:{
     filePath: string;
     overrideEpApplicationDomainName?: string;
+    overrideEpAssetApplicationDomainName?: string;
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     const apiSpecString: string = fs.readFileSync(filePath).toString();
@@ -50,18 +51,19 @@ export class EpAsyncApiDocumentService {
       apiSpec: apiSpecString,
       apiSpecFilePath: filePath
     });
-    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, prefixEpApplicationDomainName);
+    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName);
     epAsyncApiDocument.validate();
     return epAsyncApiDocument;
   }
 
-  public createFromAny = async({ anySpec, overrideEpApplicationDomainName, prefixEpApplicationDomainName }:{
+  public createFromAny = async({ anySpec, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName }:{
     anySpec: any;
     overrideEpApplicationDomainName?: string;
+    overrideEpAssetApplicationDomainName?: string;
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     const asyncApiDocument: AsyncAPIDocument = await this.parse(anySpec);
-    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, prefixEpApplicationDomainName);
+    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName);
     return epAsyncApiDocument;
   }
 
