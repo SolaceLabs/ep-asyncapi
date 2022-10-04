@@ -192,6 +192,10 @@ export class EpAsyncApiChannelDocument {
     return this.epEventVersionName; 
   }
 
+  public getApplicationDomainName(): string {
+    return this.epAsyncApiDocument.getAssetApplicationDomainName();
+  }
+
   public getEpAsyncApiChannelParameterDocumentMap(): T_EpAsyncApiChannelParameterDocumentMap | undefined {
     if(!this.asyncApiChannel.hasParameters()) return undefined;
     

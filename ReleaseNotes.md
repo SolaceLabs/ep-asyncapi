@@ -2,6 +2,12 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.7.0-alpha
+
+**New Features:**
+- **Asset Domain**
+  - option to define asset app domain separate to app domain
+
 ## Version 0.6.1-alpha
 
 **Enhancements:**
