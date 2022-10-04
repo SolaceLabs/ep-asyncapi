@@ -134,5 +134,27 @@ describe(`${scriptName}`, () => {
       }
     });
 
+    it(`${scriptName}: should set asset app domain to app domain when omitted`, async () => {
+      AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/asset-domain/asset-domain-3.spec.yml`;
+      AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test/asset-domain/app-domain-3";
+      AsyncApiSpecFile_X_EpAssetApplicationDomainName = AsyncApiSpecFile_X_EpApplicationDomainName;
+
+      try {
+        const epAsyncApiDocument: EpAsyncApiDocument = await EpAsyncApiDocumentService.createFromFile({
+          filePath: AsyncApiSpecFile,
+        });
+        const appDomainName = epAsyncApiDocument.getApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const expected_AppDomainName = `${AsyncApiSpecFile_X_EpApplicationDomainName}`;
+        const expected_AssetAppDomainName = `${AsyncApiSpecFile_X_EpAssetApplicationDomainName}`;
+        let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
+        expect(appDomainName, message).to.eq(expected_AppDomainName);
+        expect(assetAppDomainName, message).to.eq(expected_AssetAppDomainName);
+      } catch(e) {
+        expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
+        expect(false, TestLogger.createEpAsyncApiTestFailMessage('failed', e)).to.be.true;
+      }
+    });
+
 });
 
