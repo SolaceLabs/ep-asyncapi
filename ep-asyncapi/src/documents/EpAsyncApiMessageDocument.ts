@@ -135,8 +135,13 @@ export class EpAsyncApiMessageDocument {
     return this.asyncApiMessage.name();
   }
 
+  public getPayloadSchemaName(): string {
+    const schema: Schema = this.asyncApiMessage.payload();
+    return schema.title();
+  }
+
   public getSchemaFileName(): string {
-    if(this.getContentType() === E_EpAsyncApiContentTypes.APPLICATION_JSON) return `${this.getMessageNameAsFilePath()}.${"json"}`;
+    if(this.getContentType() === E_EpAsyncApiContentTypes.APPLICATION_JSON) return `${this.getPayloadSchemaName()}.${"json"}`;
     return `${this.getMessageNameAsFilePath()}.${"xxx"}`
   }
 
