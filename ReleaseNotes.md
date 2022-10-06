@@ -2,6 +2,12 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.7.1-alpha
+
+**Fixes:**
+- **EpAsyncApiDocumentService.createFromAny()**
+  - fixed bug parsing spec
+
 ## Version 0.7.0-alpha
 
 **New Features:**
