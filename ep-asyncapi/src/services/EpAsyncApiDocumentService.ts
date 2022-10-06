@@ -62,7 +62,7 @@ export class EpAsyncApiDocumentService {
     overrideEpAssetApplicationDomainName?: string;
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
-    const asyncApiDocument: AsyncAPIDocument = await this.parse(anySpec);
+    const asyncApiDocument: AsyncAPIDocument = await parse(anySpec);
     const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName);
     return epAsyncApiDocument;
   }
