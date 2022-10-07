@@ -39,6 +39,8 @@ export class EpAsyncApiChannelDocument {
     const xEpEventName: string | undefined = this.get_X_EpEventName();
     if(xEpEventName !== undefined) this.epEventName = xEpEventName;
     else this.epEventName = this.asyncApiChannelKey;
+    // Note: message name must NOT contain slashes '/', otherwise exported async api channel will reference a message which will NOT be found.
+    this.epEventName = this.epEventName.replaceAll(/[^0-9a-zA-Z\._]+/g, '-');
   }
   private createEpEventVersionName() {
     if(this.epEventVersionName !== undefined) return;

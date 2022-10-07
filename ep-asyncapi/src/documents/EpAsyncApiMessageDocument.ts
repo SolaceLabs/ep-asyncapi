@@ -109,7 +109,8 @@ export class EpAsyncApiMessageDocument {
   public getMessageName(): string {
     // const funcName = 'getMessageName';
     // const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
-    let name: string = this.asyncApiMessageKey;
+    // Note: message name must NOT contain slashes '/', otherwise exported async api channel will reference a message which will NOT be found.
+    let name: string = this.asyncApiMessageKey.replaceAll(/[^0-9a-zA-Z\._]+/g, '-');
     if(this.asyncApiMessage.name() !== undefined) name = this.asyncApiMessage.name();
     return name;
   }
