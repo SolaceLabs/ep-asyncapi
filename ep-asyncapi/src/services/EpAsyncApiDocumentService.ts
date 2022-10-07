@@ -47,11 +47,19 @@ export class EpAsyncApiDocumentService {
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     const apiSpecString: string = fs.readFileSync(filePath).toString();
+    // take a copy of the spec
+    const originalApiSpecString = JSON.parse(JSON.stringify(apiSpecString));
     const asyncApiDocument: AsyncAPIDocument = await this.parse({ 
       apiSpec: apiSpecString,
       apiSpecFilePath: filePath
     });
-    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName);
+    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(
+      originalApiSpecString,
+      asyncApiDocument, 
+      overrideEpApplicationDomainName, 
+      overrideEpAssetApplicationDomainName, 
+      prefixEpApplicationDomainName
+    );
     epAsyncApiDocument.validate();
     return epAsyncApiDocument;
   }
@@ -62,8 +70,16 @@ export class EpAsyncApiDocumentService {
     overrideEpAssetApplicationDomainName?: string;
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
+    // take a copy of the spec
+    const originalApiSpec = JSON.parse(JSON.stringify(anySpec));
     const asyncApiDocument: AsyncAPIDocument = await parse(anySpec);
-    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(asyncApiDocument, overrideEpApplicationDomainName, overrideEpAssetApplicationDomainName, prefixEpApplicationDomainName);
+    const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(
+      originalApiSpec,
+      asyncApiDocument, 
+      overrideEpApplicationDomainName, 
+      overrideEpAssetApplicationDomainName, 
+      prefixEpApplicationDomainName
+    );
     return epAsyncApiDocument;
   }
 

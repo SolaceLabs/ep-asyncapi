@@ -193,7 +193,7 @@ export class EpAsyncApiChannelDocument {
   }
 
   public getApplicationDomainName(): string {
-    return this.epAsyncApiDocument.getAssetApplicationDomainName();
+    return this.epAsyncApiDocument.getAssetsApplicationDomainName();
   }
 
   public getEpAsyncApiChannelParameterDocumentMap(): T_EpAsyncApiChannelParameterDocumentMap | undefined {

@@ -1,8 +1,8 @@
 asyncapi: '2.4.0'
-x-ep-application-domain-name: solace-labs/ep-asyncapi/test/asset-domain/app-domain-2
-x-ep-asset-application-domain-name: solace-labs/ep-asyncapi/test/asset-domain/assets
+x-ep-application-domain-name: solace-labs/ep-asyncapi/test/assets-domain/app-domain-1
+x-ep-assets-application-domain-name: solace-labs/ep-asyncapi/test/assets-domain/assets
 info:
-  title: Asset Domain 2
+  title: Asset Domain 1
   version: '1.0.0'
 
 defaultContentType: application/json
@@ -18,14 +18,14 @@ channels:
       message:
         $ref: '#/components/messages/Event-A'
 
-  solace-labs/ep-asyncapi/test/asset-domain/{type}/event-c:
-    x-ep-event-name: Event-C
+  solace-labs/ep-asyncapi/test/asset-domain/{type}/event-b:
+    x-ep-event-name: Event-B
     parameters:
       type:
         $ref: '#/components/parameters/type'
     subscribe:
       message:
-        $ref: '#/components/messages/Event-C'
+        $ref: '#/components/messages/Event-B'
 
 components:
   messages:
@@ -37,11 +37,11 @@ components:
           event-a:
             type: string
 
-    Event-C:
+    Event-B:
       payload:
         type: object
         properties:
-          event-c:
+          event-b:
             type: string
 
   parameters:

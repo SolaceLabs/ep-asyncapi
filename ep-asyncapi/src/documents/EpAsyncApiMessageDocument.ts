@@ -25,16 +25,24 @@ export class EpAsyncApiMessageDocument {
     const funcName = 'determineContentType';
     const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
     
-    let contentType: string | undefined = this.asyncApiMessage.contentType();
-    if(!contentType) contentType = this.epAsyncApiDocument.getDefaultContentType();
-    if(contentType === undefined) throw new EpAsyncApiMessageError(logName, this.constructor.name, {
+    // note: 
+    // contentType: application/vnd.apache.avro+json
+    // contentType: application/json
+    // contentType: application/vnd.aai.asyncapi;version=2.0.0
+
+    let contentTypeString: string | undefined = this.asyncApiMessage.contentType();
+    if(!contentTypeString) contentTypeString = this.epAsyncApiDocument.getDefaultContentType();
+    if(contentTypeString === undefined) throw new EpAsyncApiMessageError(logName, this.constructor.name, {
       issue: EpAsyncApiMessageDocument.ContentTypeIssue,
       apiTitle: this.epAsyncApiDocument.getTitle(),
       apiChannel: this.epAsyncApiChannelDocument?.getAsyncApiChannelKey(),
       apiMessage: this.getMessageName(),
       apiMessageContent: this.asyncApiMessage,
     });
-    return contentType as E_EpAsyncApiContentTypes;
+    // hardcode to application/json
+    // nonsense, cater for EP not setting content type correctly
+    if(contentTypeString.includes('avro')) return E_EpAsyncApiContentTypes.APPLICATION_JSON;
+    return E_EpAsyncApiContentTypes.APPLICATION_JSON;
   }
 
   private determineSchemaFormatType(): E_EpAsyncApiSchemaFormatType {
@@ -99,8 +107,8 @@ export class EpAsyncApiMessageDocument {
   public getMessageKey(): string { return this.asyncApiMessageKey; }
 
   public getMessageName(): string {
-    const funcName = 'getMessageName';
-    const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
+    // const funcName = 'getMessageName';
+    // const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
     let name: string = this.asyncApiMessageKey;
     if(this.asyncApiMessage.name() !== undefined) name = this.asyncApiMessage.name();
     return name;
@@ -109,10 +117,6 @@ export class EpAsyncApiMessageDocument {
   public getContentType(): E_EpAsyncApiContentTypes { return this.contentType; }
 
   public getSchemaFormatType(): E_EpAsyncApiSchemaFormatType { return this.schemaFormatType; }
-
-  public getPayloadSchema(): Schema {
-    return this.asyncApiMessage.payload();
-  }
 
   public getOriginalPayloadSchema(): any {
     return this.asyncApiMessage.originalPayload();
@@ -137,7 +141,9 @@ export class EpAsyncApiMessageDocument {
 
   public getPayloadSchemaName(): string {
     const schema: Schema = this.asyncApiMessage.payload();
-    return schema.title();
+    let name: string | undefined = schema.title();
+    if(!name) name = this.getMessageName();
+    return name;
   }
 
   public getSchemaFileName(): string {
@@ -145,20 +151,22 @@ export class EpAsyncApiMessageDocument {
     return `${this.getMessageNameAsFilePath()}.${"xxx"}`
   }
 
-  public getSchemaAsSanitizedJson(): any {
-    const funcName = 'getSchemaAsSanitizedJson';
+  public getPayloadSchema(): any {
+    const funcName = 'getPayloadSchema';
     const logName = `${EpAsyncApiMessageDocument.name}.${funcName}()`;
-    let anySchema: any;
     switch(this.schemaFormatType) {
       case E_EpAsyncApiSchemaFormatType.APPLICATION_JSON:
-        anySchema = this.asyncApiMessage.payload().json();
-        break;
+        return this.asyncApiMessage.payload().json();
       case E_EpAsyncApiSchemaFormatType.APPLICATION_AVRO:
-        anySchema = this.asyncApiMessage.originalPayload();
-        break;
+        return this.asyncApiMessage.originalPayload();
       default:
         EpAsyncApiUtils.assertNever(logName, this.schemaFormatType);
     }
+    // should never get here
+    return undefined;
+  }
+  public getSchemaAsSanitizedJson(): any {
+    const anySchema: any = this.getPayloadSchema();
     const sanitized = JSON.parse(JSON.stringify(anySchema, (k,v) => {
       if(k.startsWith("x-parser")) return undefined;
       return v;
