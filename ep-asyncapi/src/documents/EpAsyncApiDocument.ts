@@ -114,15 +114,34 @@ export class EpAsyncApiDocument {
     this.epEventApiVersionName = xEpEventApiVersionName;
   }
   private createOriginalApiSpecJson(originalApiSpec: any): any {
+    const funcName = 'createOriginalApiSpecJson';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
+
+    // console.log(`${logName}: originalApiSpec=${originalApiSpec}`);
     try {
-      // check if json
-      JSON.parse(originalApiSpec);
-      // it is a json
-      return originalApiSpec;
+      // json string?
+      const json = JSON.parse(originalApiSpec);
+      // console.log(`${logName}, a json string, json=${JSON.stringify(json)}`);
+      return json;
     } catch(e) {
-      // it is a yaml string      
-      const doc: any = yaml.load(originalApiSpec);
-      return doc;
+      try {
+        // yaml string?
+        const json = yaml.load(originalApiSpec);
+        try {
+          // check if really an object now
+          const jsonObject = JSON.parse(JSON.stringify(json));
+          if(JSON.stringify(jsonObject).includes('["object Object"]')) throw new Error('next');
+          // console.log(`${logName}, a yaml string, json=${JSON.stringify(jsonObject)}`);
+          return jsonObject;
+        } catch(e) {
+          // json object?
+          const json = JSON.parse(JSON.stringify(originalApiSpec));
+          // console.log(`${logName}, a json object, json=${JSON.stringify(json)}`);
+          return json;
+        }
+      } catch(e) {
+        throw new EpAsyncApiInternalError(logName, this.constructor.name, 'unable to determine original spec type');
+      }
     }
   }
 

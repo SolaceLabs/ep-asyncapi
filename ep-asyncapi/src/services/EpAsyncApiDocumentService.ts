@@ -48,13 +48,13 @@ export class EpAsyncApiDocumentService {
   }): Promise<EpAsyncApiDocument> => {
     const apiSpecString: string = fs.readFileSync(filePath).toString();
     // take a copy of the spec
-    const originalApiSpecString = JSON.parse(JSON.stringify(apiSpecString));
+    const originalApiSpecJson = JSON.parse(JSON.stringify(apiSpecString));
     const asyncApiDocument: AsyncAPIDocument = await this.parse({ 
       apiSpec: apiSpecString,
       apiSpecFilePath: filePath
     });
     const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(
-      originalApiSpecString,
+      originalApiSpecJson,
       asyncApiDocument, 
       overrideEpApplicationDomainName, 
       overrideEpAssetApplicationDomainName, 
@@ -71,10 +71,10 @@ export class EpAsyncApiDocumentService {
     prefixEpApplicationDomainName?: string;
   }): Promise<EpAsyncApiDocument> => {
     // take a copy of the spec
-    const originalApiSpec = JSON.parse(JSON.stringify(anySpec));
+    const originalApiSpecJson = JSON.parse(JSON.stringify(anySpec));
     const asyncApiDocument: AsyncAPIDocument = await parse(anySpec);
     const epAsyncApiDocument: EpAsyncApiDocument = new EpAsyncApiDocument(
-      originalApiSpec,
+      originalApiSpecJson,
       asyncApiDocument, 
       overrideEpApplicationDomainName, 
       overrideEpAssetApplicationDomainName, 
