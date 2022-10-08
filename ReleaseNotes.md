@@ -2,6 +2,13 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.7.2-alpha
+
+**Enhancements:**
+  - added: **EpAsyncApiDocument.getOriginalAsJson(), EpAsyncApiDocument.getOriginalAsYamlString()**
+    - get the original spec as json or yaml from the document
+
+
 ## Version 0.7.1-alpha
 
 **Fixes:**

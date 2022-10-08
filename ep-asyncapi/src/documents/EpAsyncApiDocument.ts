@@ -12,7 +12,7 @@ import { Validator, ValidatorResult } from 'jsonschema';
 
 enum E_EpAsyncApiExtensions {
   X_EP_APPLICATION_DOMAIN_NAME = "x-ep-application-domain-name",
-  X_EP_ASSET_APPLICATION_DOMAIN_NAME = "x-ep-asset-application-domain-name"
+  X_EP_ASSETS_APPLICATION_DOMAIN_NAME = "x-ep-assets-application-domain-name"
 };
 
 export enum E_EpAsyncApiContentTypes {
@@ -35,13 +35,14 @@ export type T_EpAsyncApiEventNames = {
 
 export class EpAsyncApiDocument {
   // private appConfig: TCliAppConfig;
+  private originalApiSpecJson: any;
   private asyncApiDocument: AsyncAPIDocument;
   private overrideEpApplicationDomainName: string | undefined;
-  private overrideEpAssetApplicationDomainName: string | undefined;
+  private overrideEpAssetsApplicationDomainName: string | undefined;
   private prefixEpApplicationDomainName: string | undefined;
   private asyncApiDocumentJson: any;
   private applicationDomainName: string;
-  private assetApplicationDomainName: string;
+  private assetsApplicationDomainName: string;
   private epEventApiName?: string;
   private epEventApiVersionName?: string;
   public static NotSemVerIssue = 'Please use semantic versioning format for API version.';
@@ -62,9 +63,9 @@ export class EpAsyncApiDocument {
     return this.asyncApiDocumentJson[E_EpAsyncApiExtensions.X_EP_APPLICATION_DOMAIN_NAME];
   }
 
-  private get_X_EpAssetApplicationDomainName(): string | undefined {
+  private get_X_EpAssetsApplicationDomainName(): string | undefined {
     // TODO: there should be a parser method to get this
-    return this.asyncApiDocumentJson[E_EpAsyncApiExtensions.X_EP_ASSET_APPLICATION_DOMAIN_NAME];
+    return this.asyncApiDocumentJson[E_EpAsyncApiExtensions.X_EP_ASSETS_APPLICATION_DOMAIN_NAME];
   }
 
   private createApplicationDomainName(prefix: string | undefined): string {
@@ -86,20 +87,20 @@ export class EpAsyncApiDocument {
     return appDomainName;
   }
 
-  private createAssetApplicationDomainName(prefix: string | undefined): string {
+  private createAssetsApplicationDomainName(prefix: string | undefined): string {
     // const funcName = 'createAssetApplicationDomainName';
     // const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
     const appDomainNameNoPrefix = this.createApplicationDomainName(undefined);
-    let assetAppDomainName: string | undefined = this.overrideEpAssetApplicationDomainName;
-    if(assetAppDomainName === undefined) {
-      const specAssetAppDomainName = this.get_X_EpAssetApplicationDomainName();
-      if(specAssetAppDomainName === undefined) assetAppDomainName = undefined;
-      else assetAppDomainName = specAssetAppDomainName;
+    let assetsAppDomainName: string | undefined = this.overrideEpAssetsApplicationDomainName;
+    if(assetsAppDomainName === undefined) {
+      const specAssetAppDomainName = this.get_X_EpAssetsApplicationDomainName();
+      if(specAssetAppDomainName === undefined) assetsAppDomainName = undefined;
+      else assetsAppDomainName = specAssetAppDomainName;
     }
-    if(assetAppDomainName === undefined) assetAppDomainName = appDomainNameNoPrefix;
+    if(assetsAppDomainName === undefined) assetsAppDomainName = appDomainNameNoPrefix;
     // add the prefix 
-    if(prefix !== undefined) assetAppDomainName = `${prefix}/${assetAppDomainName}`;
-    return assetAppDomainName;
+    if(prefix !== undefined) assetsAppDomainName = `${prefix}/${assetsAppDomainName}`;
+    return assetsAppDomainName;
   }
 
   private createEpEventApiName() {
@@ -112,15 +113,47 @@ export class EpAsyncApiDocument {
     const xEpEventApiVersionName: string = this.getTitle();
     this.epEventApiVersionName = xEpEventApiVersionName;
   }
+  private createOriginalApiSpecJson(originalApiSpec: any): any {
+    const funcName = 'createOriginalApiSpecJson';
+    const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
 
-  constructor(asyncApiDocument: AsyncAPIDocument, overrideEpApplicationDomainName: string | undefined, overrideEpAssetApplicationDomainName: string | undefined, prefixEpApplicationDomainName: string | undefined) {
+    // console.log(`${logName}: originalApiSpec=${originalApiSpec}`);
+    try {
+      // json string?
+      const json = JSON.parse(originalApiSpec);
+      // console.log(`${logName}, a json string, json=${JSON.stringify(json)}`);
+      return json;
+    } catch(e) {
+      try {
+        // yaml string?
+        const json = yaml.load(originalApiSpec);
+        try {
+          // check if really an object now
+          const jsonObject = JSON.parse(JSON.stringify(json));
+          if(JSON.stringify(jsonObject).includes('["object Object"]')) throw new Error('next');
+          // console.log(`${logName}, a yaml string, json=${JSON.stringify(jsonObject)}`);
+          return jsonObject;
+        } catch(e) {
+          // json object?
+          const json = JSON.parse(JSON.stringify(originalApiSpec));
+          // console.log(`${logName}, a json object, json=${JSON.stringify(json)}`);
+          return json;
+        }
+      } catch(e) {
+        throw new EpAsyncApiInternalError(logName, this.constructor.name, 'unable to determine original spec type');
+      }
+    }
+  }
+
+  constructor(originalApiSpec: any, asyncApiDocument: AsyncAPIDocument, overrideEpApplicationDomainName: string | undefined, overrideEpAssetApplicationDomainName: string | undefined, prefixEpApplicationDomainName: string | undefined) {
+    this.originalApiSpecJson = this.createOriginalApiSpecJson(originalApiSpec);
     this.asyncApiDocument = asyncApiDocument;
     this.asyncApiDocumentJson = this.getJSON(asyncApiDocument);
     this.overrideEpApplicationDomainName = overrideEpApplicationDomainName;
-    this.overrideEpAssetApplicationDomainName = overrideEpAssetApplicationDomainName;
+    this.overrideEpAssetsApplicationDomainName = overrideEpAssetApplicationDomainName;
     this.prefixEpApplicationDomainName = prefixEpApplicationDomainName;
     this.applicationDomainName = this.createApplicationDomainName(prefixEpApplicationDomainName);
-    this.assetApplicationDomainName = this.createAssetApplicationDomainName(prefixEpApplicationDomainName);
+    this.assetsApplicationDomainName = this.createAssetsApplicationDomainName(prefixEpApplicationDomainName);
   }
 
   private validate_EpEventApiName = () => {
@@ -216,7 +249,7 @@ export class EpAsyncApiDocument {
 
   public getApplicationDomainName(): string { return this.applicationDomainName; }
 
-  public getAssetApplicationDomainName(): string { return this.assetApplicationDomainName; }
+  public getAssetsApplicationDomainName(): string { return this.assetsApplicationDomainName; }
 
   public getTitleAsFilePath(): string {
     return this.getTitle().replaceAll(/[^0-9a-zA-Z]+/g, '-');
@@ -248,19 +281,34 @@ export class EpAsyncApiDocument {
     return this.epEventApiVersionName; 
   }
 
-
-  public getAsSanitizedJson(): any {
-    const sanitized = JSON.parse(JSON.stringify(this.asyncApiDocumentJson, (k,v) => {
-      if(k.startsWith("x-parser")) return undefined;
-      return v;
-    }));
-
-    return sanitized;
+  public getAsJson(): any {
+    return this.asyncApiDocumentJson;
   }
 
-  public getAsSanitizedYamlString(): string {
-    const json = this.getAsSanitizedJson();
+  // public getAsSanitizedJson(): any {
+  //   const sanitized = JSON.parse(JSON.stringify(this.asyncApiDocumentJson, (k,v) => {
+  //     if(k.startsWith("x-parser")) return undefined;
+  //     return v;
+  //   }));
+  //   return sanitized;
+  // }
+
+  public getAsYamlString(): string {
+    const json = this.getAsJson();
     return yaml.dump(json);
+  }
+
+  // public getAsSanitizedYamlString(): string {
+  //   const json = this.getAsSanitizedJson();
+  //   return yaml.dump(json);
+  // }
+
+  public getOriginalSpecAsJson(): any {
+    return this.originalApiSpecJson;
+  }
+
+  public getOriginalSpecAsYamlString(): string {
+    return yaml.dump(this.originalApiSpecJson);
   }
 
   public getEpAsyncApiEventNames(): T_EpAsyncApiEventNames {

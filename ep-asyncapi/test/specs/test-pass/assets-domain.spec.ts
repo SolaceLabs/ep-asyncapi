@@ -14,7 +14,7 @@ TestLogger.logMessage(scriptName, ">>> starting ...");
 
 let AsyncApiSpecFile: string;
 let AsyncApiSpecFile_X_EpApplicationDomainName: string;
-let AsyncApiSpecFile_X_EpAssetApplicationDomainName: string;
+let AsyncApiSpecFile_X_EpAssetsApplicationDomainName: string;
 
 describe(`${scriptName}`, () => {
     
@@ -24,9 +24,9 @@ describe(`${scriptName}`, () => {
 
     it(`${scriptName}: should initialize globals`, async () => {
       try {
-        AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/asset-domain/asset-domain-1.spec.yml`;
-        AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test/asset-domain/app-domain-1";
-        AsyncApiSpecFile_X_EpAssetApplicationDomainName = "solace-labs/ep-asyncapi/test/asset-domain/assets";
+        AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/assets-domain/assets-domain-1.spec.yml`;
+        AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test/assets-domain/app-domain-1";
+        AsyncApiSpecFile_X_EpAssetsApplicationDomainName = "solace-labs/ep-asyncapi/test/assets-domain/assets";
       } catch(e) {
         expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
         expect(false, TestLogger.createEpAsyncApiTestFailMessage('failed', e)).to.be.true;
@@ -39,9 +39,9 @@ describe(`${scriptName}`, () => {
           filePath: AsyncApiSpecFile,
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetsAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         expect(appDomainName, 'failed').to.eq(AsyncApiSpecFile_X_EpApplicationDomainName);
-        expect(assetAppDomainName, 'failed').to.eq(AsyncApiSpecFile_X_EpAssetApplicationDomainName);
+        expect(assetsAppDomainName, 'failed').to.eq(AsyncApiSpecFile_X_EpAssetsApplicationDomainName);
       } catch(e) {
         expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
         expect(false, TestLogger.createEpAsyncApiTestFailMessage('failed', e)).to.be.true;
@@ -56,9 +56,9 @@ describe(`${scriptName}`, () => {
           prefixEpApplicationDomainName: TestAppDomainPrefix
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         const expected_AppDomainName = `${TestAppDomainPrefix}/${AsyncApiSpecFile_X_EpApplicationDomainName}`;
-        const expected_AssetAppDomainName = `${TestAppDomainPrefix}/${AsyncApiSpecFile_X_EpAssetApplicationDomainName}`;
+        const expected_AssetAppDomainName = `${TestAppDomainPrefix}/${AsyncApiSpecFile_X_EpAssetsApplicationDomainName}`;
         let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
         expect(appDomainName, message).to.eq(expected_AppDomainName);
         expect(assetAppDomainName, message).to.eq(expected_AssetAppDomainName);
@@ -76,9 +76,9 @@ describe(`${scriptName}`, () => {
           overrideEpApplicationDomainName: TestAppDomainOverride,
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         const expected_AppDomainName = `${TestAppDomainOverride}`;
-        const expected_AssetAppDomainName = `${AsyncApiSpecFile_X_EpAssetApplicationDomainName}`;
+        const expected_AssetAppDomainName = `${AsyncApiSpecFile_X_EpAssetsApplicationDomainName}`;
         let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
         expect(appDomainName, message).to.eq(expected_AppDomainName);
         expect(assetAppDomainName, message).to.eq(expected_AssetAppDomainName);
@@ -98,7 +98,7 @@ describe(`${scriptName}`, () => {
           overrideEpAssetApplicationDomainName: TestAssetAppDomainOverride,
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         const expected_AppDomainName = `${TestAppDomainOverride}`;
         const expected_AssetAppDomainName = `${TestAssetAppDomainOverride}`;
         let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
@@ -122,7 +122,7 @@ describe(`${scriptName}`, () => {
           prefixEpApplicationDomainName: TestAppDomainPrefix
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         const expected_AppDomainName = `${TestAppDomainPrefix}/${TestAppDomainOverride}`;
         const expected_AssetAppDomainName = `${TestAppDomainPrefix}/${TestAssetAppDomainOverride}`;
         let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
@@ -135,18 +135,18 @@ describe(`${scriptName}`, () => {
     });
 
     it(`${scriptName}: should set asset app domain to app domain when omitted`, async () => {
-      AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/asset-domain/asset-domain-3.spec.yml`;
-      AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test/asset-domain/app-domain-3";
-      AsyncApiSpecFile_X_EpAssetApplicationDomainName = AsyncApiSpecFile_X_EpApplicationDomainName;
+      AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/assets-domain/assets-domain-3.spec.yml`;
+      AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test/assets-domain/app-domain-3";
+      AsyncApiSpecFile_X_EpAssetsApplicationDomainName = AsyncApiSpecFile_X_EpApplicationDomainName;
 
       try {
         const epAsyncApiDocument: EpAsyncApiDocument = await EpAsyncApiDocumentService.createFromFile({
           filePath: AsyncApiSpecFile,
         });
         const appDomainName = epAsyncApiDocument.getApplicationDomainName();
-        const assetAppDomainName = epAsyncApiDocument.getAssetApplicationDomainName();
+        const assetAppDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
         const expected_AppDomainName = `${AsyncApiSpecFile_X_EpApplicationDomainName}`;
-        const expected_AssetAppDomainName = `${AsyncApiSpecFile_X_EpAssetApplicationDomainName}`;
+        const expected_AssetAppDomainName = `${AsyncApiSpecFile_X_EpAssetsApplicationDomainName}`;
         let message = `\nappDomainName=${appDomainName}\nassetAppDomainName=${assetAppDomainName}\n`;
         expect(appDomainName, message).to.eq(expected_AppDomainName);
         expect(assetAppDomainName, message).to.eq(expected_AssetAppDomainName);
