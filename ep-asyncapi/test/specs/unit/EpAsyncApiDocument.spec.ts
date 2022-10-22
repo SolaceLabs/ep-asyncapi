@@ -14,6 +14,7 @@ TestLogger.logMessage(scriptName, ">>> starting ...");
 
 let Global_AsyncApiSpecFile: string;
 let Global_AsyncApiSpecFile_X_EpApplicationDomainName: string;
+let Global_AsyncApiSpecFile_X_EpAssetsApplicationDomainName: string;
 let Global_Title: string;
 let Global_EpAsyncApiDocument: EpAsyncApiDocument;
 
@@ -27,6 +28,7 @@ describe(`${scriptName}`, () => {
       try {
         Global_AsyncApiSpecFile = `${TestConfig.getConfig().dataRootDir}/test-pass/01.title-special-chars.spec.yml`;
         Global_AsyncApiSpecFile_X_EpApplicationDomainName = "solace-labs/ep-asyncapi/test";
+        Global_AsyncApiSpecFile_X_EpAssetsApplicationDomainName = 
         Global_Title = "slash=/,amp;=&,star=*,quotes=''";
       } catch(e) {
         expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
@@ -61,6 +63,31 @@ describe(`${scriptName}`, () => {
         expect(titleAsFileName, 'failed').to.eq(expected_titleAsFileName);
         
     });
+
+    it(`${scriptName}: should get prefixed and unprefixed application domain names`, async () => {
+
+      const originalApplicationDomainName = "originalApplicationDomainName";
+      const originalAssetsApplicationDomainName = "originalAssetsApplicationDomainName";
+      const prefix = "prefix";
+
+      const epAsyncApiDocument: EpAsyncApiDocument = await EpAsyncApiDocumentService.createFromFile({
+        filePath: Global_AsyncApiSpecFile,
+        overrideEpApplicationDomainName: originalApplicationDomainName,
+        overrideEpAssetApplicationDomainName: originalAssetsApplicationDomainName,
+        prefixEpApplicationDomainName: prefix
+      });
+
+      const prefixedApplicationDomainName = epAsyncApiDocument.getApplicationDomainName();
+      const unprefixedApplicationDomainName = epAsyncApiDocument.getUnprefixedApplicationDomainName();
+      const prefixedAssetApplicationDomainName = epAsyncApiDocument.getAssetsApplicationDomainName();
+      const unprefixedAssetsApplicationDomainName = epAsyncApiDocument.getUnprefixedAssetsApplicationDomainName();
+
+      expect(prefixedApplicationDomainName, 'prefixedApplicationDomainName failed').to.include(prefix);
+      expect(prefixedAssetApplicationDomainName, 'prefixedAssetApplicationDomainName failed').to.include(prefix);
+      expect(unprefixedApplicationDomainName, 'unprefixedApplicationDomainName failed').to.equal(originalApplicationDomainName);
+      expect(unprefixedAssetsApplicationDomainName, 'unprefixedAssetsApplicationDomainName failed').to.equal(originalAssetsApplicationDomainName);
+      
+  });
 
   
 });
