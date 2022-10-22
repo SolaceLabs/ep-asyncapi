@@ -41,8 +41,10 @@ export class EpAsyncApiDocument {
   private overrideEpAssetsApplicationDomainName: string | undefined;
   private prefixEpApplicationDomainName: string | undefined;
   private asyncApiDocumentJson: any;
+  private unprefixedApplicationDomainName: string;
   private applicationDomainName: string;
   private assetsApplicationDomainName: string;
+  private unprefixedAssetsApplicationDomainName: string;
   private epEventApiName?: string;
   private epEventApiVersionName?: string;
   public static NotSemVerIssue = 'Please use semantic versioning format for API version.';
@@ -68,7 +70,7 @@ export class EpAsyncApiDocument {
     return this.asyncApiDocumentJson[E_EpAsyncApiExtensions.X_EP_ASSETS_APPLICATION_DOMAIN_NAME];
   }
 
-  private createApplicationDomainName(prefix: string | undefined): string {
+  private createApplicationDomainName(prefix?: string): string {
     const funcName = 'createApplicationDomainName';
     const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
 
@@ -87,7 +89,7 @@ export class EpAsyncApiDocument {
     return appDomainName;
   }
 
-  private createAssetsApplicationDomainName(prefix: string | undefined): string {
+  private createAssetsApplicationDomainName(prefix?: string): string {
     // const funcName = 'createAssetApplicationDomainName';
     // const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
     const appDomainNameNoPrefix = this.createApplicationDomainName(undefined);
@@ -154,6 +156,8 @@ export class EpAsyncApiDocument {
     this.prefixEpApplicationDomainName = prefixEpApplicationDomainName;
     this.applicationDomainName = this.createApplicationDomainName(prefixEpApplicationDomainName);
     this.assetsApplicationDomainName = this.createAssetsApplicationDomainName(prefixEpApplicationDomainName);
+    this.unprefixedApplicationDomainName = this.createApplicationDomainName();
+    this.unprefixedAssetsApplicationDomainName = this.createAssetsApplicationDomainName();
   }
 
   private validate_EpEventApiName = () => {
@@ -249,7 +253,11 @@ export class EpAsyncApiDocument {
 
   public getApplicationDomainName(): string { return this.applicationDomainName; }
 
+  public getUnprefixedApplicationDomainName(): string { return this.unprefixedApplicationDomainName; }
+
   public getAssetsApplicationDomainName(): string { return this.assetsApplicationDomainName; }
+
+  public getUnprefixedAssetsApplicationDomainName(): string { return this.unprefixedAssetsApplicationDomainName; }
 
   public getTitleAsFilePath(): string {
     return this.getTitle().replaceAll(/[^0-9a-zA-Z]+/g, '-');

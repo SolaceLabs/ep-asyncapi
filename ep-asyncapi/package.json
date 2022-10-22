@@ -1,6 +1,6 @@
 {
   "name": "@solace-labs/ep-asyncapi",
-  "version": "0.7.2-alpha",
+  "version": "0.8.0-alpha",
   "description": "Solace Event Portal AsyncAPI",
   "type": "commonjs",
   "main": "dist/index.js",

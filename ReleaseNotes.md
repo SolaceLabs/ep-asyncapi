@@ -2,6 +2,12 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.8.0-alpha
+
+**Enhancements:**
+  - added: **EpAsyncApiDocument.getUnprefixedApplicationDomainName(), EpAsyncApiDocument.getUnprefixedAssetsApplicationDomainName()**
+    - get the original application & assets application domain name without the prefix
+
 ## Version 0.7.2-alpha
 
 **Enhancements:**
