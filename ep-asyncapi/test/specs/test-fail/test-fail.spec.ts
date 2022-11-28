@@ -33,7 +33,7 @@ describe(`${scriptName}`, () => {
         expect(e instanceof EpAsyncApiError, TestLogger.createNotEpAsyncApiErrorMesssage(e)).to.be.true;
         expect(e instanceof EpAsyncApiValidationError, TestLogger.createTestFailMessageForError('e instanceof EpAsyncApiValidationError', e)).to.be.true;
         const epAsyncApiValidationError: EpAsyncApiValidationError = e;
-        expect(JSON.stringify(epAsyncApiValidationError.details), TestLogger.createTestFailMessage(JSON.stringify(epAsyncApiValidationError.details, null, 2))).to.contain('epEventApiVersionName');
+        expect(JSON.stringify(epAsyncApiValidationError.details), TestLogger.createTestFailMessage(JSON.stringify(epAsyncApiValidationError.details, null, 2))).to.contain('epEventApiName');
       }
     });
 
