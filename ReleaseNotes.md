@@ -2,6 +2,11 @@
 
 Solace Event Portal AsyncAPI.
 
+## Version 0.9.0-alpha
+
+**Maintenance:**
+- upgraded "@asyncapi/parser": "^1.17.2",
+
 ## Version 0.8.0-alpha
 
 **Enhancements:**

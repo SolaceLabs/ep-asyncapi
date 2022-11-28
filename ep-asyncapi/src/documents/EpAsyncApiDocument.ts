@@ -1,5 +1,6 @@
 import yaml from "js-yaml";
 
+import { $EventApi, $EventApiVersion } from "@solace-labs/ep-openapi-node";
 import { AsyncAPIDocument, Message, Channel } from '@asyncapi/parser';
 import { EpAsyncApiInternalError, EpAsyncApiSpecError, EpAsyncApiValidationError, EpAsyncApiXtensionError } from '../utils/EpAsyncApiErrors';
 import { EpAsyncApiMessageDocument } from "./EpAsyncApiMessageDocument";
@@ -7,7 +8,6 @@ import { EpAsyncApiChannelDocument } from "./EpAsyncApiChannelDocument";
 import { EpAsyncApiChannelParameterDocument } from "./EpAsyncApiChannelParameterDocument";
 import { EpAsynApiChannelPublishOperation, EpAsyncApiChannelSubscribeOperation } from "./EpAsyncApiChannelOperation";
 import EpAsyncApiUtils from "../utils/EpAsyncApiUtils";
-import { $EventApi, $eventApiVersion } from "@solace-labs/ep-openapi-node";
 import { Validator, ValidatorResult } from 'jsonschema';
 
 enum E_EpAsyncApiExtensions {
@@ -182,7 +182,7 @@ export class EpAsyncApiDocument {
   private validate_EpEventApiVersionName = () => {
     const funcName = 'validate_EpEventApiVersionName';
     const logName = `${EpAsyncApiDocument.name}.${funcName}()`;
-    const schema = $eventApiVersion.properties.displayName;
+    const schema = $EventApiVersion.properties.displayName;
 
     this.createEpEventApiVersionName();
     if(this.epEventApiVersionName === undefined) throw new EpAsyncApiInternalError(logName, this.constructor.name, 'this.epEventApiVersionName === undefined');
