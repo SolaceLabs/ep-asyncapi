@@ -1,3 +1,11 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+# DEPRECATED
+
+Moved to [Solace Tools Repo](https://github.com/SolaceLabs/solace-tools-typescript).
+
+---
+
 [![test](https://github.com/SolaceLabs/ep-asyncapi/actions/workflows/test.yml/badge.svg)](https://github.com/SolaceLabs/ep-asyncapi/actions/workflows/test.yml)
 [![docs-test](https://github.com/SolaceLabs/ep-asyncapi/actions/workflows/docs-test.yml/badge.svg)](https://github.com/SolaceLabs/ep-asyncapi/actions/workflows/docs-test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/SolaceLabs/ep-asyncapi/badge.svg?branch=main&kill_cache=1)](https://coveralls.io/github/SolaceLabs/ep-asyncapi?branch=main)
